@@ -2,8 +2,8 @@
 <a href="https://dscvit.com">
 	<img src="https://user-images.githubusercontent.com/30529572/92081025-fabe6f00-edb1-11ea-9169-4a8a61a5dd45.png" alt="DSC VIT"/>
 </a>
-	<h2 align="center"> < Insert Project Title Here > </h2>
-	<h4 align="center"> < Insert Project Description Here > <h4>
+	<h2 align="center"> Cadence  </h2>
+	<h4 align="center"> A smart song alarm app<h4>
 </p>
 
 ---
@@ -15,16 +15,17 @@
 
 
 ## Features
-- [ ]  < feature >
-- [ ]  < feature >
-- [ ]  < feature >
-- [ ]  < feature >
-
+- [ ]   Fetching user's playlist
+- [ ]   Can be used as a normal alarm app 
+- [ ]   Flexible labels 
+- [ ]   ML to anticipate alarm 
+- [ ]   Flutter app for both Android and IOS 
+ 
 <br>
 
 ## Dependencies
- - < dependency >
- - < dependency >
+ - < Spotify SDK >
+ - < Spotify web API >
 
 
 ## Running
@@ -32,13 +33,7 @@
 
 < directions to install > 
 ```bash
-< insert code >
-```
-
-< directions to execute >
-
-```bash
-< insert code >
+link to app will be added here
 ```
 
 ## Contributors
@@ -46,15 +41,15 @@
 <table>
 	<tr align="center">
 		<td>
-		John Doe
+		Nirmit Jatana
 		<p align="center">
-			<img src = "https://dscvit.com/images/dsc-logo-square.svg" width="150" height="150" alt="Your Name Here (Insert Your Image Link In Src">
+			<img src = "https://media-exp1.licdn.com/dms/image/C5603AQECvftbQ_5F_w/profile-displayphoto-shrink_800_800/0/1609847053031?e=1618444800&v=beta&t=8E-QWEdHhdONgQWNNNry_YIUwXm6i22sel5ZNDwXhz0" width="150" height="150" alt="Nirmit Jatana">
 		</p>
 			<p align="center">
-				<a href = "https://github.com/person1">
+				<a href = "https://github.com/Nirmitjatana">
 					<img src = "http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height = "36" alt="GitHub"/>
 				</a>
-				<a href = "https://www.linkedin.com/in/person1">
+				<a href = "https://www.linkedin.com/in/nirmit-jatana-6814a4188/">
 					<img src = "http://www.iconninja.com/files/863/607/751/network-linkedin-social-connection-circular-circle-media-icon.svg" width="36" height="36" alt="LinkedIn"/>
 				</a>
 			</p>
