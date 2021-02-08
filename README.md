@@ -2,8 +2,8 @@
 <a href="https://dscvit.com">
 	<img src="https://user-images.githubusercontent.com/30529572/92081025-fabe6f00-edb1-11ea-9169-4a8a61a5dd45.png" alt="DSC VIT"/>
 </a>
-	<h2 align="center"> < Insert Project Title Here > </h2>
-	<h4 align="center"> < Insert Project Description Here > <h4>
+	<h2 align="center"> < Cadence > </h2>
+	<h4 align="center"> < A smart song alarm app > <h4>
 </p>
 
 ---
@@ -15,16 +15,16 @@
 
 
 ## Features
-- [ ]  < feature >
-- [ ]  < feature >
-- [ ]  < feature >
-- [ ]  < feature >
+- [ ]  < Flexible labels >
+- [ ]  < ML to anticipate alarm >
+- [ ]  < Flutter app for both Android and IOS >
+- [ ]  < can be used as a normal alarm app >
 
 <br>
 
 ## Dependencies
- - < dependency >
- - < dependency >
+ - < Spotify SDK >
+ - < Spotify web API >
 
 
 ## Running
@@ -35,23 +35,17 @@
 < insert code >
 ```
 
-< directions to execute >
-
-```bash
-< insert code >
-```
-
 ## Contributors
 
 <table>
 	<tr align="center">
 		<td>
-		John Doe
+		Nirmit Jatana
 		<p align="center">
 			<img src = "https://dscvit.com/images/dsc-logo-square.svg" width="150" height="150" alt="Your Name Here (Insert Your Image Link In Src">
 		</p>
 			<p align="center">
-				<a href = "https://github.com/person1">
+				<a href = "https://github.com/Nirmitjatana">
 					<img src = "http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height = "36" alt="GitHub"/>
 				</a>
 				<a href = "https://www.linkedin.com/in/person1">
