@@ -24,15 +24,15 @@ class MyApp extends StatelessWidget {
         body: Container(
           padding: EdgeInsets.all(60),
           child: Row(children: [
-          //   Text(
-          //   'Synced \nplaylists',
-          //     style: TextStyle(
-          //       color: Colors.white,
-          //       fontSize: 40,
-          //       fontFamily: 'Metropolis',
-          //     ),
+            Text(
+            'Synced \nplaylists',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 40,
+                fontFamily: 'Metropolis',
+              ),
                
-          // ),
+          ),
         //   IconButton(
         //   icon: Icon(Icons.volume_up),
         //   tooltip: 'Increase volume by 10',
