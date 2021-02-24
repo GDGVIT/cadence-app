@@ -8,8 +8,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Welcome to Flutter',
       theme: ThemeData(
-        accentColor: Colors.white,
-        primaryColor: Colors.white,
+        // accentColor: Colors.white,
+        // primaryColor: Colors.white,
         fontFamily: 'Metropolis',
         
         ),
@@ -28,13 +28,17 @@ class MyApp extends StatelessWidget {
             'Synced \nplaylists',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 40,
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
                 fontFamily: 'Metropolis',
               ),
                
           ),
           IconButton(
-          icon: Icon(Icons.volume_up),
+          icon: Icon(Icons.cached,
+          color: Colors.white,
+          
+          ),
           tooltip: 'Increase volume by 10',
           onPressed: () {
           },
