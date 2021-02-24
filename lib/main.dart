@@ -23,7 +23,11 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.black,
         body: Container(
           padding: EdgeInsets.all(60),
-          child: Row(children: [
+          child: Column(children: [
+
+            Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
             Text(
             'Synced \nplaylists',
               style: TextStyle(
@@ -35,16 +39,26 @@ class MyApp extends StatelessWidget {
                
           ),
           IconButton(
+          iconSize: 35,
           icon: Icon(Icons.cached,
           color: Colors.white,
+          
           
           ),
           tooltip: 'Increase volume by 10',
           onPressed: () {
           },
         ),
-          ],)
-        ),
+          ],),
+
+          // search bar
+
+        
+
+
+
+          ],)        
+          ),
       ),
     );
   }
