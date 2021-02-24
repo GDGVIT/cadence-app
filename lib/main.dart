@@ -8,9 +8,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Welcome to Flutter',
       theme: ThemeData(
-        // accentColor: Colors.white,
-        // primaryColor: Colors.white,
-        // fontFamily: 'Metropolis',
+        accentColor: Colors.white,
+        primaryColor: Colors.white,
+        fontFamily: 'Metropolis',
         
         ),
       home: Scaffold(
