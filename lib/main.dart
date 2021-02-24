@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
 
         backgroundColor: Colors.black,
         body: Container(
-          // padding: EdgeInsets.all(60),
+          padding: EdgeInsets.all(60),
           child: Row(children: [
           //   Text(
           //   'Synced \nplaylists',
