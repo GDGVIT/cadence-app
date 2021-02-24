@@ -33,12 +33,12 @@ class MyApp extends StatelessWidget {
               ),
                
           ),
-        //   IconButton(
-        //   icon: Icon(Icons.volume_up),
-        //   tooltip: 'Increase volume by 10',
-        //   onPressed: () {
-        //   },
-        // ),
+          IconButton(
+          icon: Icon(Icons.volume_up),
+          tooltip: 'Increase volume by 10',
+          onPressed: () {
+          },
+        ),
           ],)
         ),
       ),
