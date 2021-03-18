@@ -31,28 +31,64 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.fromLTRB(0, 200, 0, 0),
       child:Row(children: [
-        Text(
-          'Cadence',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Metropolis',
-            fontSize: 60,
-            decorationColor: Colors.black,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-          child: Image(image: AssetImage('Assets/logo.png'))),
-        //logo
-      ],)
+            Align(
+              alignment: Alignment.topCenter,
+              child: Logrow(),
+            ) ,
+            
+    
+            //logo
+    
+          // ],
+  // ),
+],)
       //button
     );
   }
 }
 
 
+class Logrow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+          Padding(
+                  padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                  // children:     [
+                  
+                          child:Text(
+                  
+                            'Cadence',
+                  
+                            style: TextStyle(
+                  
+                              color: Colors.white,
+                  
+                              fontFamily: 'Metropolis',
+                  
+                              fontSize: 60,
+                  
+                              decorationColor: Colors.black,
+                  
+                            ),
+                  
+                          ),
+                ),
 
+                Padding(
+    
+              padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+    
+              child: Image(image: AssetImage('Assets/logo.png'))),
+
+
+      ],
+    );
+  }
+}
 
 
 
