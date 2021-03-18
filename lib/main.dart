@@ -20,10 +20,30 @@ class MyApp extends StatelessWidget {
         //   ),
         
         ),
-      home: Playlist(),
+      home: Login(),
     );
   }
 }
+
+
+
+class Login extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child:Row(children: [
+        Text(
+          'Cadence'
+        ),
+        
+        //logo
+      ],)
+      //button
+    );
+  }
+}
+
+
 
 
 
@@ -71,11 +91,13 @@ class Playlist extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(10, 50, 10, 40),
             child:TextField(
+
               decoration: InputDecoration(
                 // border: InputBorder.,  
                 hintText: 'Enter a search term',
                 hintStyle: TextStyle(  
-                  color: Colors.grey  
+                  color: Colors.grey,
+                  fontFamily: 'Metropolis',  
                   // fontStyle: FontStyle,
                 ),
               ),
