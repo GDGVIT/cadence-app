@@ -33,9 +33,17 @@ class Login extends StatelessWidget {
     return Container(
       child:Row(children: [
         Text(
-          'Cadence'
+          'Cadence',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Metropolis',
+            fontSize: 60,
+            decorationColor: Colors.black,
+          ),
         ),
-        
+        Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          child: Image(image: AssetImage('Assets/logo.png'))),
         //logo
       ],)
       //button
