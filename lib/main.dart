@@ -32,23 +32,76 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 200, 0, 0),
-      child:Row(children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: Logrow(),
-            ) ,
+      child:
+            Column(
+              children:[
+                  Align(
+                        alignment: Alignment.topCenter,
+                        child: Logrow(),
+                       ),
+                  Row(
+                    children: [
+                      LoginButton(),
+                    ],
+                  )
+                       ]
+            )
+            
             
     
             //logo
     
           // ],
   // ),
-],)
-      //button
-    );
+// ],)
+      
+          );
   }
 }
 
+
+class LoginButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      // mainAxisSize: MainAxisSize.min,
+      child: Container(
+      width: 230,
+  
+  // margin: EdgeInsets.fromLTRB(50, 200, 0, 0),
+  child: RaisedButton(
+  shape: RoundedRectangleBorder(
+         borderRadius: BorderRadius.all(Radius.circular(10.0))),
+  onPressed: (){ print('Button Clicked.'); },
+  textColor: Colors.white,
+  color: Colors.pink,
+  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+  child: Padding(
+  padding: EdgeInsets.fromLTRB(0,0,0,0),
+  child: Row(
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: <Widget>[
+	
+  Container(
+  color: Colors.pink,
+  padding: EdgeInsets.fromLTRB(10, 4, 4, 4),
+  child: Text('Button With Right Icon', 
+	 style: TextStyle(color: Colors.white),),
+   ),
+
+  Padding(
+  padding: EdgeInsets.fromLTRB(4, 0, 10, 0),
+  child: Icon(
+         Icons.backup,
+	 color:Colors.white,
+	 size: 30,
+        ),
+       ),
+      ],
+  )))),
+    );
+  }
+}
 
 class Logrow extends StatelessWidget {
   @override
