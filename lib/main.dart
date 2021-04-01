@@ -20,7 +20,9 @@ class MyApp extends StatelessWidget {
         //   ),
         
         ),
-      home: Login(),
+      home: Alarmscreen(),
+      // home: Login(),
+      // home: Playlist(),
     );
   }
 }
@@ -103,9 +105,11 @@ class LoginButton extends StatelessWidget {
   Padding(
   padding: EdgeInsets.fromLTRB(4, 0, 10, 0),
   child: ImageIcon(
-   AssetImage('Assets/logo.png')),
+   AssetImage('Assets/spotify.png'),
+     size: 30, 
+   ),
 	//  color:Colors.white,
-	//  size: 30,
+	
         ),
       //  ),
       ],
@@ -287,5 +291,41 @@ class Playlist extends StatelessWidget {
           ],)
           ),
       );
+  }
+}
+
+class Alarmscreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+            Text(
+            'Alarm',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 40,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'Metropolis',
+                decorationColor: Colors.black,
+                // fontStyle: FontStyle.italic
+              ),
+               
+          ),
+          Text(
+            'ab',
+          )
+        //   IconButton(
+        //   iconSize: 35,
+        //   icon: Icon(Icons.cached,
+        //   color: Colors.white,
+        //   ),
+        //   // tooltip: 'Increase volume by 10',
+        //   onPressed: () {
+        //     // print('ab');
+        //   },
+        // ),
+          ],);
   }
 }
