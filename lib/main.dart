@@ -39,10 +39,15 @@ class Login extends StatelessWidget {
                         alignment: Alignment.topCenter,
                         child: Logrow(),
                        ),
-                  Row(
-                    children: [
-                      LoginButton(),
-                    ],
+                  Container(
+                    margin:EdgeInsets.fromLTRB(0, 130, 0, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        LoginButton(),
+                      ]
+                    )
+                    // ],
                   )
                        ]
             )
@@ -66,16 +71,17 @@ class LoginButton extends StatelessWidget {
     return Center(
       // mainAxisSize: MainAxisSize.min,
       child: Container(
-      width: 230,
+      // width: 330,
+      margin:EdgeInsets.fromLTRB(50, 0, 50, 0),
   
   // margin: EdgeInsets.fromLTRB(50, 200, 0, 0),
   child: RaisedButton(
   shape: RoundedRectangleBorder(
-         borderRadius: BorderRadius.all(Radius.circular(10.0))),
+  borderRadius: BorderRadius.all(Radius.circular(35.0))),
   onPressed: (){ print('Button Clicked.'); },
   textColor: Colors.white,
-  color: Colors.pink,
-  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+  color: Colors.green,
+  padding: EdgeInsets.fromLTRB(15, 15, 0, 15),
   child: Padding(
   padding: EdgeInsets.fromLTRB(0,0,0,0),
   child: Row(
@@ -83,20 +89,25 @@ class LoginButton extends StatelessWidget {
   children: <Widget>[
 	
   Container(
-  color: Colors.pink,
-  padding: EdgeInsets.fromLTRB(10, 4, 4, 4),
-  child: Text('Button With Right Icon', 
-	 style: TextStyle(color: Colors.white),),
+  color: Colors.green,
+  // margin: EdgeInsets,
+  padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+  child: Text('LOGIN WITH SPOTIFY', 
+	 style: TextStyle(
+     color: Colors.white,
+     fontSize: 16
+     
+     ),),
    ),
 
   Padding(
   padding: EdgeInsets.fromLTRB(4, 0, 10, 0),
-  child: Icon(
-         Icons.backup,
-	 color:Colors.white,
-	 size: 30,
+  child: ImageIcon(
+   AssetImage('Assets/logo.png')),
+	//  color:Colors.white,
+	//  size: 30,
         ),
-       ),
+      //  ),
       ],
   )))),
     );
