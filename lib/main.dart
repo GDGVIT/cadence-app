@@ -297,35 +297,71 @@ class Playlist extends StatelessWidget {
 class Alarmscreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Container(
+      margin: const EdgeInsets.fromLTRB(40, 80, 40, 0),
+      child:
+            Column(
+              children:[
+                  Align(
+                        // alignment: Alignment.topCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            PlusRow(),
+                            PlusIcon(),
+                          ]
+                        )
+                       ),
+                  Container(
+                    margin:EdgeInsets.fromLTRB(0, 130, 0, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // LoginButton(),
+                      ]
+                    )
+                    // ],
+                  )
+                       ]
+            )
+      
+          ),
+    );
+  }
+}
 
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-            Text(
+class PlusRow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text(
             'Alarm',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 40,
-                fontWeight: FontWeight.w700,
+                fontSize: 45,
+                fontWeight: FontWeight.w900,
                 fontFamily: 'Metropolis',
                 decorationColor: Colors.black,
                 // fontStyle: FontStyle.italic
-              ),
-               
-          ),
-          Text(
-            'ab',
-          )
-        //   IconButton(
-        //   iconSize: 35,
-        //   icon: Icon(Icons.cached,
-        //   color: Colors.white,
-        //   ),
-        //   // tooltip: 'Increase volume by 10',
-        //   onPressed: () {
-        //     // print('ab');
-        //   },
-        // ),
-          ],);
+              ),  
+          );
+          // ],);
+  }
+}
+
+class PlusIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      iconSize: 30,
+      icon : Icon(Icons.add,
+      color: Colors.white,
+      ),
+      onPressed: (){
+
+      },
+      );
+      
   }
 }
