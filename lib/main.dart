@@ -5,6 +5,7 @@ import 'data.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  // const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,9 +20,9 @@ class MyApp extends StatelessWidget {
         //     ),
         //   ),
       ),
-      home: Alarmscreen(),
+      // home: Alarmscreen(),
       // home: Login(),
-      // home: Playlist(),
+      home: Playlist(),
     );
   }
 }
@@ -185,6 +186,35 @@ class Playlist extends StatelessWidget {
                   ),
                 ),
               ),
+
+            Expanded(
+              
+              child: ListView(
+                children: [
+                   Container(
+                    color: Colors.red,
+                    height: 90,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:[
+                            Radio(
+                              activeColor: Colors.blue,
+                              onChanged:null,
+                              value:true,
+                              groupValue:null,
+                              ),
+                          ]
+                        )
+                      ],
+                    ),
+                  ), 
+                ]
+              ),
+            ),
+
 
               //list
               // ListView(
