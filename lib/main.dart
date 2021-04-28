@@ -192,8 +192,14 @@ class Playlist extends StatelessWidget {
               child: ListView(
                 children: [
                    Container(
-                    color: Colors.red,
                     height: 90,
+                    decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(width: 0.5, color: Colors.grey[900]),
+                    ),
+                    color: Colors.transparent,
+                    ),
+                    
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -203,10 +209,46 @@ class Playlist extends StatelessWidget {
                             Radio(
                               activeColor: Colors.blue,
                               onChanged:null,
-                              value:true,
+                              value:0,
                               groupValue:null,
                               ),
                           ]
+                        ),
+                        
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.network('https://i.scdn.co/image/ab67616d0000b273bec74947ee43d003b6d8ee9f',
+                            height:55,
+                            )
+                          ],
+                        ),
+                        
+                        
+                        Container(
+                            margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                            child: Column(
+                            crossAxisAlignment:CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Name of Song",
+                              style: TextStyle(
+                                color: Colors.grey[100],
+                                fontSize: 17,
+                                fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                child: Text("Artist",
+                                style: TextStyle(
+                                color: Colors.grey[700],
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
+                                ),
+                                )),
+                            ]
+                          ),
                         )
                       ],
                     ),
