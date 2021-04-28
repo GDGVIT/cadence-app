@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:custom_switch/custom_switch.dart';
 import 'data.dart';
+import 'views/setalarm.dart';
 
 void main() => runApp(MyApp());
 
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
       ),
       // home: Alarmscreen(),
       // home: Login(),
-      home: Playlist(),
+      // home: Playlist(),
+      home: SetAlarm(),
     );
   }
 }
@@ -457,3 +459,5 @@ class PlusIcon extends StatelessWidget {
     );
   }
 }
+
+
