@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       // home: Alarmscreen(),
       // home: Login(),
       // home: Playlist(),
-      home: SetAlarm(),
+      home: Mg(),
     );
   }
 }
