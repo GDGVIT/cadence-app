@@ -154,10 +154,33 @@ class Songcard extends StatelessWidget {
           //     ),
           // ),
           // child: Cardelements(),
-          child: Text(
-            'NJ',
-            style: TextStyle(color: Colors.white),
+          child: Column(
+            children: [
+              Text(
+            'Select Song                 >',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 25,
+              fontWeight: FontWeight.w900,
+              fontFamily: 'Metropolis',
+
+              ),
             ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              child: Text(
+            'Select Song                 >',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 25,
+              fontWeight: FontWeight.w900,
+              fontFamily: 'Metropolis',
+
+              ),
+            ),
+              )
+            ],
+          )
             // borderRadius:,
             // child: ,
             )
