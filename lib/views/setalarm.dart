@@ -172,6 +172,7 @@ class Songcard extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                 child: Text(
               'Selected:',
+              
               style: TextStyle(
                 color: Colors.grey[700],
                 fontSize: 15,
@@ -183,7 +184,7 @@ class Songcard extends StatelessWidget {
                 ),]
             ),
 
-            
+
 
 
 
