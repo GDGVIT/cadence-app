@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:custom_switch/custom_switch.dart';
 import 'data.dart';
 import 'views/setalarm.dart';
+// import 'spotify.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
       // home: Login(),
       // home: Playlist(),
       home: Mg(),
+      // home: Spot(),
     );
   }
 }
