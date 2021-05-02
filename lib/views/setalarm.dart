@@ -136,6 +136,7 @@ class Songcard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Column(
+        
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Container(
