@@ -115,7 +115,7 @@ packages:
     source: hosted
     version: "4.0.1"
   logger:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: logger
       url: "https://pub.dartlang.org"

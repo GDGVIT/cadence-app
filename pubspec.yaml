@@ -30,7 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   custom_switch: ^0.0.1
   spotify_sdk: ^2.1.0
-  logger: ^1.0.0
+  # logger: ^1.0.0
 
 dev_dependencies:
   flutter_test:
