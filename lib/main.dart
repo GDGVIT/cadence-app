@@ -65,48 +65,49 @@ class Login extends StatelessWidget {
 class LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      // mainAxisSize: MainAxisSize.min,
-      child: Container(
-          // width: 330,
-          margin: EdgeInsets.fromLTRB(50, 0, 50, 0),
+    return 
+    Center(
+    //   // mainAxisSize: MainAxisSize.min,
+    //   child: Container(
+    //       // width: 330,
+    //       margin: EdgeInsets.fromLTRB(50, 0, 50, 0),
 
-          // margin: EdgeInsets.fromLTRB(50, 200, 0, 0),
-          child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(35.0))),
-              onPressed: () {
-                print('Button Clicked.');
-              },
-              textColor: Colors.white,
-              color: Colors.green,
-              padding: EdgeInsets.fromLTRB(15, 15, 0, 15),
-              child: Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        color: Colors.green,
-                        // margin: EdgeInsets,
-                        padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                        child: Text(
-                          'LOGIN WITH SPOTIFY',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                      ),
+    //       // margin: EdgeInsets.fromLTRB(50, 200, 0, 0),
+    //       child: RaisedButton(
+    //           shape: RoundedRectangleBorder(
+    //               borderRadius: BorderRadius.all(Radius.circular(35.0))),
+    //           onPressed: () {
+    //             print('Button Clicked.');
+    //           },
+    //           textColor: Colors.white,
+    //           color: Colors.green,
+    //           padding: EdgeInsets.fromLTRB(15, 15, 0, 15),
+    //           child: Padding(
+    //               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+    //               child: Row(
+    //                 crossAxisAlignment: CrossAxisAlignment.center,
+    //                 children: <Widget>[
+    //                   Container(
+    //                     color: Colors.green,
+    //                     // margin: EdgeInsets,
+    //                     padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+    //                     child: Text(
+    //                       'LOGIN WITH SPOTIFY',
+    //                       style: TextStyle(color: Colors.white, fontSize: 16),
+    //                     ),
+    //                   ),
 
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(4, 0, 10, 0),
-                        child: ImageIcon(
-                          AssetImage('Assets/spotify.png'),
-                          size: 30,
-                        ),
-                        //  color:Colors.white,
-                      ),
-                      //  ),
-                    ],
-                  )))),
+    //                   Padding(
+    //                     padding: EdgeInsets.fromLTRB(4, 0, 10, 0),
+    //                     child: ImageIcon(
+    //                       AssetImage('Assets/spotify.png'),
+    //                       size: 30,
+    //                     ),
+    //                     //  color:Colors.white,
+    //                   ),
+    //                   //  ),
+    //                 ],
+    //               )))),
     );
   }
 }
