@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:custom_switch/custom_switch.dart';
 import 'data.dart';
-import 'views/setalarm.dart';
+// import 'views/setalarm.dart';
 // import 'spotify.dart';
 
 void main() => runApp(MyApp());
@@ -23,9 +23,9 @@ class MyApp extends StatelessWidget {
         //   ),
       ),
       // home: Alarmscreen(),
-      // home: Login(),
+      home: Login(),
       // home: Playlist(),
-      home: Mg(),
+      // home: Mg(),
       // home: Spot(),
     );
   }
@@ -118,7 +118,7 @@ class Logrow extends StatelessWidget {
     return Row(
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(40, 0, 0, 0),
           // children:     [
 
           child: Text(
