@@ -1,9 +1,9 @@
 <p align="center">
 <a href="https://dscvit.com">
-	<img src="https://user-images.githubusercontent.com/30529572/92081025-fabe6f00-edb1-11ea-9169-4a8a61a5dd45.png" alt="DSC VIT"/>
+	<img src="https://user-images.githubusercontent.com/30529572/72455010-fb38d400-37e7-11ea-9c1e-8cdeb5f5906e.png" alt="DSC VIT"/>
 </a>
-	<h2 align="center"> Cadence  </h2>
-	<h4 align="center"> A smart song alarm app<h4>
+	<h2 align="center">VITTY</h2>
+	<h4 align="center">Android App for Time Table</h4>
 </p>
 
 ---
@@ -19,7 +19,6 @@
 - [ ]   Can be used as a normal alarm app 
 - [ ]   Flexible labels 
 - [ ]   ML to anticipate alarm 
-- [ ]   Flutter app for both Android and IOS 
  
 <br>
 
@@ -41,15 +40,15 @@ link to app will be added here
 <table>
 	<tr align="center">
 		<td>
-		Nirmit Jatana
+		Yajat Malhotra
 		<p align="center">
-			<img src = "https://media-exp1.licdn.com/dms/image/C5603AQECvftbQ_5F_w/profile-displayphoto-shrink_800_800/0/1609847053031?e=1618444800&v=beta&t=8E-QWEdHhdONgQWNNNry_YIUwXm6i22sel5ZNDwXhz0" width="150" height="150" alt="Nirmit Jatana">
+			<img src = "https://avatars.githubusercontent.com/u/68477362?s=460&u=3512e6223472e97a050f292478d125602c371fec&v=4" width="150" height="150" alt="Yajat Malhotra">
 		</p>
 			<p align="center">
-				<a href = "https://github.com/Nirmitjatana">
+				<a href = "https://github.com/iamyajat">
 					<img src = "http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height = "36" alt="GitHub"/>
 				</a>
-				<a href = "https://www.linkedin.com/in/nirmit-jatana-6814a4188/">
+				<a href = "https://www.linkedin.com/in/iamyajat">
 					<img src = "http://www.iconninja.com/files/863/607/751/network-linkedin-social-connection-circular-circle-media-icon.svg" width="36" height="36" alt="LinkedIn"/>
 				</a>
 			</p>
