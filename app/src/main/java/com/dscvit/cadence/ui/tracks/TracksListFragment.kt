@@ -35,10 +35,10 @@ class TracksListFragment : Fragment() {
         token = prefs.getString("token", "").toString()
         binding.tracks.text = token
         viewModel.setToken(token)
-        viewModel.spotifyResponse.observe(
+        viewModel.spotifyResp.observe(
             viewLifecycleOwner,
             { result ->
-                Timber.d("LOL! $result")
+                binding.tracks.text = result.toString()
             })
     }
 }

@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <data
                     android:host="callback"
-                    android:scheme="cadence"/>
+                    android:scheme="cadence" />
             </intent-filter>
         </activity>
         <activity

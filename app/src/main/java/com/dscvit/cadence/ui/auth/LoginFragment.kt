@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.dscvit.cadence.R
 import com.dscvit.cadence.databinding.FragmentLoginBinding
@@ -36,9 +35,10 @@ class LoginFragment : Fragment() {
             viewModel.isLoggedIn(true)
         }
         viewModel.isSuccessful.observe(viewLifecycleOwner, { successful ->
-            if(successful){
+            if (successful) {
                 Toast.makeText(context, "Changing page", Toast.LENGTH_SHORT).show()
-                requireView().findNavController().navigate(R.id.action_loginFragment_to_tracksListFragment)
+                requireView().findNavController()
+                    .navigate(R.id.action_loginFragment_to_tracksListFragment)
             }
         })
         return binding.root

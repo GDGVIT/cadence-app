@@ -1,6 +1,6 @@
 package com.dscvit.cadence.di
 
-import com.dscvit.cadence.model.remote.APIService
+import com.dscvit.cadence.api.ApiService
 import com.dscvit.cadence.utils.SpotifyConstants.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -13,13 +13,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    @Provides
+    fun provideBaseUrl() = BASE_URL
 
     @Provides
     @Singleton
-    fun provideRetrofitInstance(): APIService =
+    fun provideRetrofitInstance(BASE_URL: String): ApiService =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(APIService::class.java)
+            .create(ApiService::class.java)
 }
