@@ -1,13 +1,11 @@
 package com.dscvit.cadence.ui
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.navigation.NavController
 import com.dscvit.cadence.R
 import com.dscvit.cadence.ui.auth.LoginViewModel
 import com.dscvit.cadence.utils.SpotifyConstants
@@ -20,10 +18,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: LoginViewModel by viewModels()
+    lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        prefs = getSharedPreferences("user_data", MODE_PRIVATE)
         viewModel.isSuccessful(false)
         viewModel.isLoggedIn.observe(this, { loggedIn ->
             if (loggedIn) {
@@ -39,7 +39,15 @@ class MainActivity : AppCompatActivity() {
                 AuthorizationResponse.Type.TOKEN,
                 SpotifyConstants.REDIRECT_URI
             )
-        builder.setScopes(arrayOf("user-library-read"))
+        builder.setScopes(
+            arrayOf(
+                "user-library-read",
+                "playlist-read-private",
+                "streaming",
+                "playlist-read-collaborative",
+                "user-read-email"
+            )
+        )
         val request = builder.build()
         AuthorizationClient.openLoginActivity(
             this,
@@ -54,7 +62,13 @@ class MainActivity : AppCompatActivity() {
             val response = AuthorizationClient.getResponse(resultCode, intent)
             when (response.type) {
                 AuthorizationResponse.Type.TOKEN -> {
-                    Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                    val token = response.accessToken
+                    prefs.edit().apply {
+                        putString("token", token)
+                        putBoolean("logged_in", true)
+                        apply()
+                    }
                     viewModel.isSuccessful(true)
                 }
                 AuthorizationResponse.Type.ERROR -> {

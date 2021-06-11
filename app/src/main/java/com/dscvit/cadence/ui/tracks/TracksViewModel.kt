@@ -8,15 +8,21 @@ import com.dscvit.cadence.model.Repository
 import com.dscvit.cadence.model.remote.data.JsonData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class TracksListViewModel @Inject constructor(
+class TracksListViewModel
+@Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
-    lateinit var token: String
-    private lateinit var _response: MutableLiveData<ArrayList<JsonData>>
+    private val _token = MutableLiveData<String>()
+    private val token: LiveData<String> get() = _token
+
+    fun setToken(t: String) {
+        _token.value = t
+    }
+
+    private val _response = MutableLiveData<ArrayList<JsonData>>()
     val spotifyResponse: LiveData<ArrayList<JsonData>>
         get() = _response
 
@@ -25,15 +31,15 @@ class TracksListViewModel @Inject constructor(
     }
 
     private fun spotifyRequest() = viewModelScope.launch {
-        repository.getSpotifyData(token).let { response ->
-            if (response.isSuccessful) {
-                val json = response.body()!!.items
-                for (items in json) {
-                    Timber.d(items.toString())
-                }
-            } else {
-                Timber.d("FAILED TO FETCH TRACKS")
-            }
-        }
+//        repository.getSpotifyData(token.toString()).let { response ->
+//            if (response.isSuccessful) {
+//                val json = response.body()!!.items
+//                for (items in json) {
+//                    Timber.d(items.toString())
+//                }
+//            } else {
+//                Timber.d("FAILED TO FETCH TRACKS")
+//            }
+//        }
     }
 }

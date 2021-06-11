@@ -6,6 +6,7 @@
     tools:context=".ui.tracks.TracksListFragment">
 
     <TextView
+        android:id="@+id/tracks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Hello" />

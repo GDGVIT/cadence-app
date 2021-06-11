@@ -11,7 +11,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.dscvit.cadence.R
 import com.dscvit.cadence.databinding.FragmentLoginBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by activityViewModels()
@@ -32,11 +34,10 @@ class LoginFragment : Fragment() {
         viewModel.isLoggedIn(false)
         binding.spotify.setOnClickListener {
             viewModel.isLoggedIn(true)
-            Toast.makeText(context, "Clicked me", Toast.LENGTH_LONG).show()
         }
         viewModel.isSuccessful.observe(viewLifecycleOwner, { successful ->
             if(successful){
-                Toast.makeText(context, "Changing page", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Changing page", Toast.LENGTH_SHORT).show()
                 requireView().findNavController().navigate(R.id.action_loginFragment_to_tracksListFragment)
             }
         })
