@@ -1,4 +1,4 @@
-package com.dscvit.cadence.ui.auth
+package com.dscvit.cadence.ui.login
 
 import android.content.Intent
 import androidx.lifecycle.LiveData

@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.dscvit.cadence.adapter.PlaylistAdapter
 import com.dscvit.cadence.databinding.FragmentTracksListBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +19,8 @@ class TracksListFragment : Fragment() {
     private val viewModel by activityViewModels<TracksListViewModel>()
     private var _binding: FragmentTracksListBinding? = null
     private val binding get() = _binding!!
-    lateinit var prefs: SharedPreferences
+    private lateinit var prefs: SharedPreferences
+    private lateinit var playlistAdapter: PlaylistAdapter
     lateinit var token: String
 
     override fun onCreateView(
@@ -32,18 +35,32 @@ class TracksListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         prefs = requireContext().getSharedPreferences("user_data", MODE_PRIVATE)
         token = prefs.getString("token", "").toString()
-        binding.tracks.text = token
         viewModel.setToken(token)
         viewModel.spotifyResp.observe(
             viewLifecycleOwner,
             { result ->
-                binding.tracks.text = result.id
+                binding.username.text = "${result.display_name}'s Playlists"
                 prefs.edit().apply {
                     putString("id", result.id)
                     putString("name", result.display_name)
                     putString("imageUrl", result.images[0].url)
                     putString("email", result.email)
                     apply()
+                }
+            })
+
+
+
+        viewModel.spotifyRespPlay.observe(
+            viewLifecycleOwner,
+            { result ->
+                playlistAdapter = PlaylistAdapter(result.items)
+                binding.playlists.apply {
+                    layoutManager = StaggeredGridLayoutManager(
+                        2, StaggeredGridLayoutManager.VERTICAL
+                    )
+                    setHasFixedSize(true)
+                    adapter = playlistAdapter
                 }
             })
     }

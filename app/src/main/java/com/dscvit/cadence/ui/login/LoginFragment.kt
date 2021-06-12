@@ -1,4 +1,4 @@
-package com.dscvit.cadence.ui.auth
+package com.dscvit.cadence.ui.login
 
 import android.os.Bundle
 import android.view.LayoutInflater

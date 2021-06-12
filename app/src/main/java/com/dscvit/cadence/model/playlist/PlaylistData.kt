@@ -6,6 +6,6 @@ data class PlaylistData(
     val limit: Int,
     val next: Any,
     val offset: Int,
-    val previous: String,
+    val previous: Any,
     val total: Int
 )

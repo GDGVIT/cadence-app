@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dscvit.cadence.R
-import com.dscvit.cadence.ui.auth.LoginViewModel
+import com.dscvit.cadence.ui.login.LoginViewModel
 import com.dscvit.cadence.utils.SpotifyConstants
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
@@ -40,11 +40,11 @@ class MainActivity : AppCompatActivity() {
             )
         builder.setScopes(
             arrayOf(
+                "user-read-email",
                 "user-library-read",
                 "playlist-read-private",
-                "streaming",
                 "playlist-read-collaborative",
-                "user-read-email"
+                "streaming"
             )
         )
         val request = builder.build()
