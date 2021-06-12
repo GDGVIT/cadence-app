@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dscvit.cadence.model.UserData
+import com.dscvit.cadence.model.user.UserData
 import com.dscvit.cadence.repository.SpotifyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -21,23 +21,26 @@ class TracksListViewModel
 
     fun setToken(t: String) {
         _token.value = t
+        spotifyRequest()
     }
 
     private val _resp = MutableLiveData<UserData>()
     val spotifyResp: LiveData<UserData>
         get() = _resp
 
-    init {
-        spotifyRequest()
-    }
 
     private fun spotifyRequest() = viewModelScope.launch {
-        repository.getSpotifyData(token.toString()).let { response ->
-            if (response.isSuccessful) {
-                _resp.postValue(response.body())
-            } else {
-                Timber.d("FAILED TO FETCH")
+        if (token.value != null) {
+            Timber.d("STARTING... ${token.value}")
+            repository.getUserData("Bearer ${token.value}").let { response ->
+                if (response.isSuccessful) {
+                    _resp.postValue(response.body())
+                } else {
+                    Timber.d("FAILED TO FETCH ${token.value}")
+                }
             }
+        } else {
+            Timber.d("NULL Failed")
         }
     }
 }

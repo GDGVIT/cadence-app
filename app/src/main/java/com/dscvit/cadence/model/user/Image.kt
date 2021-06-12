@@ -1,4 +1,4 @@
-package com.dscvit.cadence.model
+package com.dscvit.cadence.model.user
 
 data class Image(
     val height: Any,

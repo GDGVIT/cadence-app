@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.dscvit.cadence.databinding.FragmentTracksListBinding
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class TracksListFragment : Fragment() {
@@ -38,7 +37,14 @@ class TracksListFragment : Fragment() {
         viewModel.spotifyResp.observe(
             viewLifecycleOwner,
             { result ->
-                binding.tracks.text = result.toString()
+                binding.tracks.text = result.id
+                prefs.edit().apply {
+                    putString("id", result.id)
+                    putString("name", result.display_name)
+                    putString("imageUrl", result.images[0].url)
+                    putString("email", result.email)
+                    apply()
+                }
             })
     }
 }

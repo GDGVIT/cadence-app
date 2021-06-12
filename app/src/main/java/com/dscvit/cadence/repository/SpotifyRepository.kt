@@ -6,5 +6,5 @@ import javax.inject.Inject
 class SpotifyRepository
 @Inject
 constructor(private val apiService: ApiService) {
-    suspend fun getSpotifyData(token: String) = apiService.getSpotifyData(token)
+    suspend fun getUserData(token: String?) = apiService.getUserData(token)
 }
