@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.dscvit.cadence.R
 import com.dscvit.cadence.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +32,6 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        viewModel.isLoggedIn(false)
         binding.spotify.setOnClickListener {
             viewModel.isLoggedIn(true)
         }

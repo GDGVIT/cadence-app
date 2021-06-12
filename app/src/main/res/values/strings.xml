@@ -8,4 +8,5 @@
     <string name="btn_req_token">Request Token</string>
     <string name="btn_clear_credentials">Clear WebView Credentials</string>
     <string name="log_in_with_spotify">Log in with Spotify</string>
+    <string name="get_started">Let’s Get Started!</string>
 </resources>
