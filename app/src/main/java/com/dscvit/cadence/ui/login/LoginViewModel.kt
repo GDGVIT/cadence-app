@@ -23,6 +23,13 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         _isSuccessful.value = success
     }
 
+    private val _isConsented = MutableLiveData<Boolean>()
+    val isConsented: LiveData<Boolean> get() = _isConsented
+
+    fun isConsented(consent: Boolean) {
+        _isConsented.value = consent
+    }
+
     fun onSpotifyResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         // TODO("onSpotifyResult()")
     }

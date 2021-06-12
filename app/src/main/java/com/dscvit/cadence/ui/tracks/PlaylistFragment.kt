@@ -10,14 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.dscvit.cadence.adapter.PlaylistAdapter
-import com.dscvit.cadence.databinding.FragmentTracksListBinding
+import com.dscvit.cadence.databinding.FragmentPlaylistBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TracksListFragment : Fragment() {
+class PlaylistFragment : Fragment() {
 
     private val viewModel by activityViewModels<TracksListViewModel>()
-    private var _binding: FragmentTracksListBinding? = null
+    private var _binding: FragmentPlaylistBinding? = null
     private val binding get() = _binding!!
     private lateinit var prefs: SharedPreferences
     private lateinit var playlistAdapter: PlaylistAdapter
@@ -27,7 +27,7 @@ class TracksListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTracksListBinding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 

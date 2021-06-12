@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         prefs = getSharedPreferences("user_data", MODE_PRIVATE)
         viewModel.isLoggedIn(prefs.getBoolean("logged_in", false))
+        viewModel.isConsented(prefs.getBoolean("consent", false))
         viewModel.isSuccessful(false)
         viewModel.isLoggedIn.observe(this, { loggedIn ->
             if (loggedIn) {

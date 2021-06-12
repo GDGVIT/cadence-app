@@ -18,4 +18,13 @@
         <item name="android:navigationBarColor">@color/black</item>
         <item name="android:textColorSecondary">@color/white</item>
     </style>
+    <style name="ButtonFancy" parent="">
+        <item name="android:backgroundTint">@null</item>
+        <item name="android:background">@drawable/btn_general</item>
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">18dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
 </resources>

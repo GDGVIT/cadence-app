@@ -2,6 +2,7 @@
 <resources>
     <color name="spotify_green">#1ed760</color>
     <color name="pink">#e91583</color>
+    <color name="blue">#27A6E8</color>
     <color name="grey">#494949</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

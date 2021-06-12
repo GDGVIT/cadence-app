@@ -8,4 +8,5 @@ class SpotifyRepository
 constructor(private val apiService: ApiService) {
     suspend fun getUserData(token: String?) = apiService.getUserData(token)
     suspend fun getPlaylistData(token: String?) = apiService.getPlaylistData(token)
+
 }

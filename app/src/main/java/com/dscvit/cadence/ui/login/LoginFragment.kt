@@ -35,11 +35,16 @@ class LoginFragment : Fragment() {
         binding.spotify.setOnClickListener {
             viewModel.isLoggedIn(true)
         }
+
         viewModel.isSuccessful.observe(viewLifecycleOwner, { successful ->
             if (successful) {
-                Toast.makeText(context, "Changing page", Toast.LENGTH_SHORT).show()
-                requireView().findNavController()
-                    .navigate(R.id.action_loginFragment_to_tracksListFragment)
+                if(viewModel.isConsented.value == true) {
+                    requireView().findNavController()
+                        .navigate(R.id.login_to_playlist)
+                } else {
+                    requireView().findNavController()
+                        .navigate(R.id.login_to_consent)
+                }
             }
         })
         return binding.root

@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="250dp"
-        android:layout_height="217dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:adjustViewBounds="true"
@@ -47,7 +47,7 @@
         android:drawablePadding="5dp"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:paddingHorizontal="15dp"
+        android:paddingHorizontal="18dp"
         android:paddingVertical="5dp"
         android:text="@string/log_in_with_spotify"
         android:textSize="16sp"
