@@ -35,7 +35,6 @@ class LoginFragment : Fragment() {
         binding.spotify.setOnClickListener {
             viewModel.isLoggedIn(true)
         }
-
         viewModel.isSuccessful.observe(viewLifecycleOwner, { successful ->
             if (successful) {
                 if(viewModel.isConsented.value == true) {
