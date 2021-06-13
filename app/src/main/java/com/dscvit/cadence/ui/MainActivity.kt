@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             )
         builder.setScopes(
             arrayOf(
+                "app-remote-control",
                 "user-read-email",
                 "user-library-read",
                 "playlist-read-private",
@@ -63,7 +64,6 @@ class MainActivity : AppCompatActivity() {
             val response = AuthorizationClient.getResponse(resultCode, intent)
             when (response.type) {
                 AuthorizationResponse.Type.TOKEN -> {
-                    Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                     val token = response.accessToken
                     prefs.edit().apply {
                         putString("token", token)
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                     viewModel.isSuccessful(true)
                 }
                 AuthorizationResponse.Type.ERROR -> {
-                    Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Login Failed :(", Toast.LENGTH_LONG).show()
                     viewModel.isSuccessful(false)
                 }
                 else -> {

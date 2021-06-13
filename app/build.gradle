@@ -57,6 +57,7 @@ allprojects {
         flatDir {
             dirs 'libs/aars'
         }
+        maven { url "https://jitpack.io" }
     }
 }
 

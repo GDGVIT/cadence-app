@@ -1,5 +1,6 @@
 package com.dscvit.cadence.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.dscvit.cadence.R
 import com.dscvit.cadence.model.playlist.Item
+import com.spotify.android.appremote.api.SpotifyAppRemote
 
-class PlaylistAdapter(private val playlists: List<Item>) :
+class PlaylistAdapter(private val playlists: List<Item>, private val spotifyAppRemote: SpotifyAppRemote) :
     RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -33,6 +35,9 @@ class PlaylistAdapter(private val playlists: List<Item>) :
             imageView.load(currPlaylist.images[0].url) {
                 crossfade(true)
                 crossfade(1000)
+            }
+            itemView.setOnClickListener {
+                spotifyAppRemote.playerApi.play("spotify:playlist:${currPlaylist.id}");
             }
         }
     }
