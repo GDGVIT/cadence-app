@@ -39,7 +39,7 @@ class LoginFragment : Fragment() {
             if (successful) {
                 if(viewModel.isConsented.value == true) {
                     requireView().findNavController()
-                        .navigate(R.id.login_to_playlist)
+                        .navigate(R.id.login_to_home)
                 } else {
                     requireView().findNavController()
                         .navigate(R.id.login_to_consent)

@@ -11,4 +11,6 @@
     <string name="get_started">Let’s Get Started!</string>
     <string name="consent_stuff">Cadence authentictes with Spotify and will read your:\n\n• <font color="#e91583">Profile Image</font> and basic details\n• <font color="#e91583">Your Playlists</font> (Private and Public)</string>
     <string name="continue_consent">Continue</string>
+    <string name="alarms">Alarms</string>
+    <string name="playlists">Playlists</string>
 </resources>

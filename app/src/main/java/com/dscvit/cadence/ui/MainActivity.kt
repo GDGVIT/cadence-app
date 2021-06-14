@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         prefs = getSharedPreferences("user_data", MODE_PRIVATE)
-        viewModel.isLoggedIn(prefs.getBoolean("logged_in", false))
+        viewModel.isLoggedIn(prefs.getBoolean("logging_in", false))
         viewModel.isConsented(prefs.getBoolean("consent", false))
         viewModel.isSuccessful(false)
         viewModel.isLoggedIn.observe(this, { loggedIn ->
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                     val token = response.accessToken
                     prefs.edit().apply {
                         putString("token", token)
-                        putBoolean("logged_in", true)
+                        putBoolean("logging_in", true)
                         apply()
                     }
                     viewModel.isSuccessful(true)

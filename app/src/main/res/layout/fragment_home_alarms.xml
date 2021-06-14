@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contentAlarms"
+    android:layout_width="match_parent"
+    android:gravity="center_horizontal"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextClock
+        android:id="@+id/digitalClock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:format12Hour="hh:mm a"
+        android:padding="20dp"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:fontFamily="@font/poppins_600"
+        android:textSize="50sp"
+        tools:text="10:30 am" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/alarms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topAppBar"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingTop="10dp"
+        android:paddingBottom="100dp" />
+</LinearLayout>

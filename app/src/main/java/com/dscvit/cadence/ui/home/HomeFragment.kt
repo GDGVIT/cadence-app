@@ -1,16 +1,20 @@
-package com.dscvit.cadence.ui.tracks
+package com.dscvit.cadence.ui.home
 
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.graphics.LinearGradient
+import android.graphics.Shader
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
+import com.dscvit.cadence.R
 import com.dscvit.cadence.adapter.PlaylistAdapter
-import com.dscvit.cadence.databinding.FragmentPlaylistBinding
+import com.dscvit.cadence.databinding.FragmentHomeBinding
 import com.dscvit.cadence.utils.SpotifyConstants.CLIENT_ID
 import com.dscvit.cadence.utils.SpotifyConstants.REDIRECT_URI
 import com.spotify.android.appremote.api.ConnectionParams
@@ -20,15 +24,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 @AndroidEntryPoint
-class PlaylistFragment : Fragment() {
+class HomeFragment : Fragment() {
 
     private val viewModel by activityViewModels<TracksListViewModel>()
-    private var _binding: FragmentPlaylistBinding? = null
+    private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var prefs: SharedPreferences
     private lateinit var playlistAdapter: PlaylistAdapter
     private lateinit var spotifyAppRemote: SpotifyAppRemote
     lateinit var token: String
+    lateinit var imageUrl: String
 
     override fun onStop() {
         super.onStop()
@@ -41,18 +46,62 @@ class PlaylistFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.alarmView.apply {
+            val paint = digitalClock.paint
+            val width = paint.measureText(digitalClock.text.toString())
+            val textShader: Shader = LinearGradient(
+                0f, 0f, width, digitalClock.textSize, intArrayOf(
+                    requireContext().getColor(R.color.orange_light),
+                    requireContext().getColor(R.color.pink_light),
+                ), null, Shader.TileMode.CLAMP
+            )
+
+            digitalClock.paint.shader = textShader
+        }
+
+        binding.syncPlaylist.hide()
+
+        binding.bottomNav.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.playlists -> {
+                    binding.apply {
+                        titleBar.text = context?.getString(R.string.playlists) ?: "Playlists"
+                        alarmView.contentAlarms.visibility = View.GONE
+                        playlists.visibility = View.VISIBLE
+                        addAlarm.hide()
+                        syncPlaylist.show()
+                    }
+                    true
+                }
+                else -> {
+                    binding.apply {
+                        titleBar.text = context?.getString(R.string.alarms) ?: "Alarms"
+                        playlists.visibility = View.GONE
+                        alarmView.contentAlarms.visibility = View.VISIBLE
+                        addAlarm.show()
+                        syncPlaylist.hide()
+                    }
+                    true
+                }
+            }
+        }
+
         prefs = requireContext().getSharedPreferences("user_data", MODE_PRIVATE)
         token = prefs.getString("token", "").toString()
+        imageUrl = prefs.getString("imageUrl", "").toString()
+        binding.profilePic.load(imageUrl) {
+            crossfade(true)
+            crossfade(1000)
+        }
         viewModel.spotifyResp.observe(
             viewLifecycleOwner,
             { result ->
-                binding.username.text = "${result.display_name}'s Playlists"
                 prefs.edit().apply {
                     putString("id", result.id)
                     putString("name", result.display_name)
@@ -86,9 +135,7 @@ class PlaylistFragment : Fragment() {
             { result ->
                 playlistAdapter = PlaylistAdapter(result.items, spotifyAppRemote)
                 binding.playlists.apply {
-                    layoutManager = StaggeredGridLayoutManager(
-                        2, StaggeredGridLayoutManager.VERTICAL
-                    )
+                    layoutManager = LinearLayoutManager(context)
                     setHasFixedSize(true)
                     adapter = playlistAdapter
                 }

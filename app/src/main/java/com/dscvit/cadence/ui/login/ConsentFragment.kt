@@ -34,7 +34,7 @@ class ConsentFragment : Fragment() {
         binding.nextBtn.setOnClickListener {
             prefs.edit().putBoolean("consent", true).apply()
             requireView().findNavController()
-                .navigate(R.id.consent_to_playlist)
+                .navigate(R.id.consent_to_home)
         }
         return binding.root
     }
