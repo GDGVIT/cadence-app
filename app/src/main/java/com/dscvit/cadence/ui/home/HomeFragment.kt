@@ -145,6 +145,7 @@ class HomeFragment : Fragment() {
                     }
 
                     override fun onFailure(throwable: Throwable) {
+                        Toast.makeText(context, "Unable to connect with Spotify", Toast.LENGTH_LONG).show()
                         Timber.e(throwable)
                         // Something went wrong when attempting to connect! Handle errors here
                     }

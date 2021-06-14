@@ -46,13 +46,29 @@ class MainActivity : AppCompatActivity() {
                 spotifySignIn()
             }
         })
+
+        viewModel.token.observe(this, { token ->
+            if (token != "" && token != null) {
+                prefs.edit().apply {
+                    putString("token", token)
+                    putBoolean("logged_in", true)
+                    apply()
+                }
+                viewModel.isSuccessful(true)
+                viewModel2.isSuccessful(true)
+                viewModel.isSyncing(false)
+                viewModel2.isSyncing(false)
+            } else {
+                Toast.makeText(this, "Unable to fetch token :(", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun spotifySignIn() {
         val builder =
             AuthorizationRequest.Builder(
                 SpotifyConstants.CLIENT_ID,
-                AuthorizationResponse.Type.TOKEN,
+                AuthorizationResponse.Type.CODE,
                 SpotifyConstants.REDIRECT_URI
             )
         builder.setScopes(
@@ -89,6 +105,14 @@ class MainActivity : AppCompatActivity() {
                     viewModel2.isSuccessful(true)
                     viewModel.isSyncing(false)
                     viewModel2.isSyncing(false)
+                }
+                AuthorizationResponse.Type.CODE -> {
+                    val code = response.code
+                    prefs.edit().apply {
+                        putString("code", code)
+                        apply()
+                    }
+                    viewModel.setCode(code)
                 }
                 AuthorizationResponse.Type.ERROR -> {
                     Toast.makeText(this, "Login Failed :(", Toast.LENGTH_LONG).show()

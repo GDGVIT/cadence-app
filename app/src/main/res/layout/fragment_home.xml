@@ -80,6 +80,7 @@
         android:layout_above="@id/bottomNav"
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
+        android:tooltipText="Add Alarm"
         android:backgroundTint="@color/pink"
         android:contentDescription="TODO"
         app:srcCompat="@drawable/ic_add" />
@@ -90,6 +91,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bottomNav"
         android:layout_alignParentEnd="true"
+        android:tooltipText="Sync"
         android:layout_margin="20dp"
         android:contentDescription="TODO"
         app:srcCompat="@drawable/ic_rsync" />
