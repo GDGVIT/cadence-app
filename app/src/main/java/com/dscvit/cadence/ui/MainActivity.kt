@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dscvit.cadence.R
+import com.dscvit.cadence.ui.home.HomeViewModel
 import com.dscvit.cadence.ui.login.LoginViewModel
 import com.dscvit.cadence.utils.SpotifyConstants
 import com.spotify.sdk.android.auth.AuthorizationClient
@@ -17,17 +18,31 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: LoginViewModel by viewModels()
+    private val viewModel2: HomeViewModel by viewModels()
     private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         prefs = getSharedPreferences("user_data", MODE_PRIVATE)
-        viewModel.isLoggedIn(prefs.getBoolean("logging_in", false))
+        viewModel.isLoggedIn(prefs.getBoolean("logged_in", false))
         viewModel.isConsented(prefs.getBoolean("consent", false))
         viewModel.isSuccessful(false)
+        viewModel2.isSuccessful(false)
+        viewModel.isSyncing(false)
+        viewModel2.isSyncing(false)
         viewModel.isLoggedIn.observe(this, { loggedIn ->
             if (loggedIn) {
+                if (viewModel.isSyncing.value == true) {
+                    spotifySignIn()
+                } else {
+                    viewModel.isSuccessful(true)
+                }
+            }
+        })
+
+        viewModel2.isSyncing.observe(this, { sync ->
+            if (sync) {
                 spotifySignIn()
             }
         })
@@ -67,16 +82,26 @@ class MainActivity : AppCompatActivity() {
                     val token = response.accessToken
                     prefs.edit().apply {
                         putString("token", token)
-                        putBoolean("logging_in", true)
+                        putBoolean("logged_in", true)
                         apply()
                     }
                     viewModel.isSuccessful(true)
+                    viewModel2.isSuccessful(true)
+                    viewModel.isSyncing(false)
+                    viewModel2.isSyncing(false)
                 }
                 AuthorizationResponse.Type.ERROR -> {
                     Toast.makeText(this, "Login Failed :(", Toast.LENGTH_LONG).show()
                     viewModel.isSuccessful(false)
+                    viewModel2.isSuccessful(false)
+                    viewModel.isSyncing(false)
+                    viewModel2.isSyncing(false)
                 }
                 else -> {
+                    viewModel.isSuccessful(false)
+                    viewModel2.isSuccessful(false)
+                    viewModel.isSyncing(false)
+                    viewModel2.isSyncing(false)
                 }
             }
         }

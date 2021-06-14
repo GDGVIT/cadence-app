@@ -33,6 +33,7 @@ class LoginFragment : Fragment() {
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         binding.spotify.setOnClickListener {
+            viewModel.isSyncing(true)
             viewModel.isLoggedIn(true)
         }
         viewModel.isSuccessful.observe(viewLifecycleOwner, { successful ->
@@ -46,6 +47,7 @@ class LoginFragment : Fragment() {
                 }
             }
         })
+
         return binding.root
     }
 

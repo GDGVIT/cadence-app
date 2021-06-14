@@ -12,7 +12,7 @@ import com.dscvit.cadence.model.playlist.Item
 import com.spotify.android.appremote.api.SpotifyAppRemote
 
 class PlaylistAdapter(
-    private val playlists: List<Item>,
+    private var playlists: List<Item>,
     private val spotifyAppRemote: SpotifyAppRemote
 ) :
     RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
@@ -44,6 +44,10 @@ class PlaylistAdapter(
                 spotifyAppRemote.playerApi.play("spotify:playlist:${currPlaylist.id}");
             }
         }
+    }
+
+    fun dataSetChange(newPlaylists: List<Item>) {
+        playlists = newPlaylists
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -30,7 +30,10 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         _isConsented.value = consent
     }
 
-    fun onSpotifyResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        // TODO("onSpotifyResult()")
+    private val _isSyncing = MutableLiveData<Boolean>()
+    val isSyncing: LiveData<Boolean> get() = _isSyncing
+
+    fun isSyncing(sync: Boolean) {
+        _isSyncing.value = sync
     }
 }

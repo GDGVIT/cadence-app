@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,18 +27,18 @@ import timber.log.Timber
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
-    private val viewModel by activityViewModels<TracksListViewModel>()
+    private val viewModel by activityViewModels<HomeViewModel>()
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var prefs: SharedPreferences
     private lateinit var playlistAdapter: PlaylistAdapter
-    private lateinit var spotifyAppRemote: SpotifyAppRemote
     lateinit var token: String
     lateinit var imageUrl: String
+    var firstTime = true
 
     override fun onStop() {
         super.onStop()
-        spotifyAppRemote.let {
+        viewModel.spotifyAppRemote.value.let {
             SpotifyAppRemote.disconnect(it)
         }
     }
@@ -99,46 +100,75 @@ class HomeFragment : Fragment() {
             crossfade(true)
             crossfade(1000)
         }
-        viewModel.spotifyResp.observe(
-            viewLifecycleOwner,
-            { result ->
-                prefs.edit().apply {
-                    putString("id", result.id)
-                    putString("name", result.display_name)
-                    putString("imageUrl", result.images[0].url)
-                    putString("email", result.email)
-                    apply()
+
+        binding.syncPlaylist.setOnClickListener {
+            viewModel.isSyncing(true)
+        }
+
+        try {
+            viewModel.isSuccessful.observe(
+                viewLifecycleOwner, { successful ->
+                    if (successful) {
+                        token = prefs.getString("token", "").toString()
+                        if (viewModel.spotifyAppRemote.value != null) {
+                            viewModel.setToken(token)
+                        }
+                    }
                 }
-            })
-        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
-            .setRedirectUri(REDIRECT_URI)
-            .showAuthView(true)
-            .build()
+            )
 
-        SpotifyAppRemote.connect(context, connectionParams, object : Connector.ConnectionListener {
-            override fun onConnected(appRemote: SpotifyAppRemote) {
-                spotifyAppRemote = appRemote
-                Timber.d("Connected! Yay!")
-                viewModel.setToken(token)
-            }
+            viewModel.spotifyResp.observe(
+                viewLifecycleOwner,
+                { result ->
+                    prefs.edit().apply {
+                        putString("id", result.id)
+                        putString("name", result.display_name)
+                        putString("imageUrl", result.images[0].url)
+                        putString("email", result.email)
+                        apply()
+                    }
+                })
 
-            override fun onFailure(throwable: Throwable) {
-                Timber.e(throwable)
-                // Something went wrong when attempting to connect! Handle errors here
-            }
-        })
+            val connectionParams = ConnectionParams.Builder(CLIENT_ID)
+                .setRedirectUri(REDIRECT_URI)
+                .showAuthView(true)
+                .build()
 
+            SpotifyAppRemote.connect(
+                context,
+                connectionParams,
+                object : Connector.ConnectionListener {
+                    override fun onConnected(appRemote: SpotifyAppRemote) {
+                        viewModel.spotifyAppRemote(appRemote)
+                        Timber.d("Connected! Yay!")
+                        viewModel.setToken(token)
+                    }
 
+                    override fun onFailure(throwable: Throwable) {
+                        Timber.e(throwable)
+                        // Something went wrong when attempting to connect! Handle errors here
+                    }
+                })
 
-        viewModel.spotifyRespPlay.observe(
-            viewLifecycleOwner,
-            { result ->
-                playlistAdapter = PlaylistAdapter(result.items, spotifyAppRemote)
-                binding.playlists.apply {
-                    layoutManager = LinearLayoutManager(context)
-                    setHasFixedSize(true)
-                    adapter = playlistAdapter
-                }
-            })
+            viewModel.spotifyRespPlay.observe(
+                viewLifecycleOwner,
+                { result ->
+                    if (firstTime) {
+                        playlistAdapter =
+                            PlaylistAdapter(result.items, viewModel.spotifyAppRemote.value!!)
+                        binding.playlists.apply {
+                            layoutManager = LinearLayoutManager(context)
+                            setHasFixedSize(true)
+                            adapter = playlistAdapter
+                        }
+                        firstTime = false
+                    } else {
+                        playlistAdapter.dataSetChange(result.items)
+                        playlistAdapter.notifyDataSetChanged()
+                    }
+                })
+        } catch (e: Exception) {
+            Toast.makeText(context, "Something went wrong :(", Toast.LENGTH_SHORT).show()
+        }
     }
 }

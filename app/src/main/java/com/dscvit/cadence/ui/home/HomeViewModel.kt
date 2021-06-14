@@ -7,13 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.dscvit.cadence.model.playlist.PlaylistData
 import com.dscvit.cadence.model.user.UserData
 import com.dscvit.cadence.repository.SpotifyRepository
+import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class TracksListViewModel
+class HomeViewModel
 @Inject constructor(
     private val repository: SpotifyRepository
 ) : ViewModel() {
@@ -65,4 +66,26 @@ class TracksListViewModel
             Timber.d("NULL Failed2")
         }
     }
+
+    private val _isSyncing = MutableLiveData<Boolean>()
+    val isSyncing: LiveData<Boolean> get() = _isSyncing
+
+    fun isSyncing(sync: Boolean) {
+        _isSyncing.value = sync
+    }
+
+    private val _isSuccessful = MutableLiveData<Boolean>()
+    val isSuccessful: LiveData<Boolean> get() = _isSuccessful
+
+    fun isSuccessful(success: Boolean) {
+        _isSuccessful.value = success
+    }
+
+    private val _spotifyAppRemote = MutableLiveData<SpotifyAppRemote>()
+    val spotifyAppRemote: LiveData<SpotifyAppRemote> get() = _spotifyAppRemote
+
+    fun spotifyAppRemote(success: SpotifyAppRemote) {
+        _spotifyAppRemote.value = success
+    }
+
 }
