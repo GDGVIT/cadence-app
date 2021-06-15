@@ -72,7 +72,7 @@ class LoginViewModel @Inject constructor(
                 "Basic $CLIENT_DETAILS_ENCODED",
                 "authorization_code",
                 "${code.value}",
-                "$REDIRECT_URI"
+                REDIRECT_URI
             ).let { response ->
                 if (response.isSuccessful) {
                     _tokenData.postValue(response.body())

@@ -12,7 +12,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
 import com.dscvit.cadence.adapter.PlaylistAdapter
 import com.dscvit.cadence.databinding.FragmentHomeBinding
@@ -24,6 +27,7 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
@@ -33,15 +37,10 @@ class HomeFragment : Fragment() {
     private lateinit var prefs: SharedPreferences
     private lateinit var playlistAdapter: PlaylistAdapter
     lateinit var token: String
+    lateinit var refToken: String
     lateinit var imageUrl: String
     var firstTime = true
 
-    override fun onStop() {
-        super.onStop()
-        viewModel.spotifyAppRemote.value.let {
-            SpotifyAppRemote.disconnect(it)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,24 +93,37 @@ class HomeFragment : Fragment() {
         }
 
         prefs = requireContext().getSharedPreferences("user_data", MODE_PRIVATE)
-        token = prefs.getString("token", "").toString()
+//        token = prefs.getString("token", "").toString()
+        refToken = prefs.getString("refresh_token", "").toString()
         imageUrl = prefs.getString("imageUrl", "").toString()
-        binding.profilePic.load(imageUrl) {
-            crossfade(true)
-            crossfade(1000)
-        }
+        val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .transition(withCrossFade(factory))
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .centerCrop()
+            .placeholder(R.drawable.profile_pic_placeholder)
+            .into(binding.profilePic)
+
 
         binding.syncPlaylist.setOnClickListener {
             viewModel.isSyncing(true)
         }
 
+        viewModel.token.observe(viewLifecycleOwner, { t ->
+            if (t != "" && t != null) {
+                token = t
+                prefs.edit().putString("token", token).apply()
+            }
+        })
+
         try {
             viewModel.isSuccessful.observe(
                 viewLifecycleOwner, { successful ->
                     if (successful) {
-                        token = prefs.getString("token", "").toString()
+                        refToken = prefs.getString("refresh_token", "").toString()
                         if (viewModel.spotifyAppRemote.value != null) {
-                            viewModel.setToken(token)
+                            viewModel.setRefreshToken(refToken)
                         }
                     }
                 }
@@ -127,6 +139,15 @@ class HomeFragment : Fragment() {
                         putString("email", result.email)
                         apply()
                     }
+
+                    imageUrl = result.images[0].url
+                    Glide.with(requireContext())
+                        .load(imageUrl)
+                        .transition(withCrossFade(factory))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .placeholder(R.drawable.profile_pic_placeholder)
+                        .into(binding.profilePic)
                 })
 
             val connectionParams = ConnectionParams.Builder(CLIENT_ID)
@@ -141,11 +162,12 @@ class HomeFragment : Fragment() {
                     override fun onConnected(appRemote: SpotifyAppRemote) {
                         viewModel.spotifyAppRemote(appRemote)
                         Timber.d("Connected! Yay!")
-                        viewModel.setToken(token)
+                        viewModel.setRefreshToken(refToken)
                     }
 
                     override fun onFailure(throwable: Throwable) {
-                        Toast.makeText(context, "Unable to connect with Spotify", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Unable to connect with Spotify", Toast.LENGTH_LONG)
+                            .show()
                         Timber.e(throwable)
                         // Something went wrong when attempting to connect! Handle errors here
                     }
@@ -170,6 +192,13 @@ class HomeFragment : Fragment() {
                 })
         } catch (e: Exception) {
             Toast.makeText(context, "Something went wrong :(", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.spotifyAppRemote.value.let {
+            SpotifyAppRemote.disconnect(it)
         }
     }
 }

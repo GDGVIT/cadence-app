@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dscvit.cadence.model.playlist.PlaylistData
+import com.dscvit.cadence.model.token.RefreshTokenData
 import com.dscvit.cadence.model.user.UserData
 import com.dscvit.cadence.repository.SpotifyRepository
+import com.dscvit.cadence.utils.SpotifyConstants
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,8 +20,41 @@ class HomeViewModel
 @Inject constructor(
     private val repository: SpotifyRepository
 ) : ViewModel() {
+    private val _refreshToken = MutableLiveData<String>()
+    private val refreshToken: LiveData<String> get() = _refreshToken
+
+    fun setRefreshToken(r: String) {
+        _refreshToken.value = r
+        getTokenData()
+    }
+
+
+    private val _tokenData = MutableLiveData<RefreshTokenData>()
+    val tokenData: LiveData<RefreshTokenData>
+        get() = _tokenData
+
+    private fun getTokenData() = viewModelScope.launch {
+        if (refreshToken.value != null) {
+            Timber.d("STARTING REF... ${refreshToken.value}")
+            repository.getRefreshTokenData(
+                "Basic ${SpotifyConstants.CLIENT_DETAILS_ENCODED}",
+                "refresh_token",
+                "${refreshToken.value}"
+            ).let { response ->
+                if (response.isSuccessful) {
+                    _tokenData.postValue(response.body())
+                    response.body()?.let { setToken(it.access_token) }
+                } else {
+                    Timber.d("FAILED TO FETCH REF ${response.raw()} ${refreshToken.value}")
+                }
+            }
+        } else {
+            Timber.d("NULL Failed REF")
+        }
+    }
+
     private val _token = MutableLiveData<String>()
-    private val token: LiveData<String> get() = _token
+    val token: LiveData<String> get() = _token
 
     fun setToken(t: String) {
         _token.value = t

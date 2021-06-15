@@ -47,11 +47,12 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.token.observe(this, { token ->
-            if (token != "" && token != null) {
+        viewModel.tokenData.observe(this, { tokenData ->
+            if (tokenData.refresh_token != "" && tokenData.access_token != "" && tokenData != null) {
                 prefs.edit().apply {
-                    putString("token", token)
+                    putString("token", tokenData.access_token)
                     putBoolean("logged_in", true)
+                    putString("refresh_token", tokenData.refresh_token)
                     apply()
                 }
                 viewModel.isSuccessful(true)

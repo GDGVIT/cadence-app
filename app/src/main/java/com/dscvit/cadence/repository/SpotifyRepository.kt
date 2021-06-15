@@ -15,4 +15,9 @@ constructor(private val apiService: ApiService) {
         redirect_uri: String,
     ) = apiService.getTokenData(client_details, grant_type, code, redirect_uri)
 
+    suspend fun getRefreshTokenData(
+        client_details: String,
+        grant_type: String,
+        refresh_token: String,
+    ) = apiService.getRefreshTokenData(client_details, grant_type, refresh_token)
 }

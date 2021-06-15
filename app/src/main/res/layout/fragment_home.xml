@@ -44,8 +44,8 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="TODO"
                     android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/circleImageView"
-                    android:src="@drawable/profile_pic_placeholder" />
+                    android:src="@drawable/profile_pic_placeholder"
+                    app:shapeAppearanceOverlay="@style/circleImageView" />
 
             </LinearLayout>
         </com.google.android.material.appbar.MaterialToolbar>
@@ -80,9 +80,10 @@
         android:layout_above="@id/bottomNav"
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
-        android:tooltipText="Add Alarm"
         android:backgroundTint="@color/pink"
         android:contentDescription="TODO"
+        android:tooltipText="Add Alarm"
+        app:borderWidth="0dp"
         app:srcCompat="@drawable/ic_add" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -91,9 +92,10 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bottomNav"
         android:layout_alignParentEnd="true"
-        android:tooltipText="Sync"
         android:layout_margin="20dp"
         android:contentDescription="TODO"
+        android:tooltipText="Sync"
+        app:borderWidth="0dp"
         app:srcCompat="@drawable/ic_rsync" />
 
 

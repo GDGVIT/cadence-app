@@ -1,6 +1,7 @@
 package com.dscvit.cadence.api
 
 import com.dscvit.cadence.model.playlist.PlaylistData
+import com.dscvit.cadence.model.token.RefreshTokenData
 import com.dscvit.cadence.model.token.TokenData
 import com.dscvit.cadence.model.user.UserData
 import retrofit2.Response
@@ -33,4 +34,12 @@ interface ApiService {
         @Field("code") code: String,
         @Field("redirect_uri") redirect_uri: String,
     ): Response<TokenData>
+
+    @FormUrlEncoded
+    @POST("https://accounts.spotify.com/api/token")
+    suspend fun getRefreshTokenData(
+        @Header("Authorization") client_details: String,
+        @Field("grant_type") grant_type: String,
+        @Field("refresh_token") code: String,
+    ): Response<RefreshTokenData>
 }

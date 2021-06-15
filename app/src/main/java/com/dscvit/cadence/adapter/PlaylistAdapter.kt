@@ -6,7 +6,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
 import com.dscvit.cadence.model.playlist.Item
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -36,10 +39,14 @@ class PlaylistAdapter(
         viewHolder.apply {
             playlistTitle.text = currPlaylist.name
             playlistSubtitle.text = "by ${currPlaylist.owner.display_name}"
-            imageView.load(currPlaylist.images[0].url) {
-                crossfade(true)
-                crossfade(1000)
-            }
+            val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
+            Glide.with(imageView.context)
+                .load(currPlaylist.images[0].url)
+                .transition(DrawableTransitionOptions.withCrossFade(factory))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .placeholder(R.drawable.profile_pic_placeholder)
+                .into(imageView)
             itemView.setOnClickListener {
                 spotifyAppRemote.playerApi.play("spotify:playlist:${currPlaylist.id}");
             }
