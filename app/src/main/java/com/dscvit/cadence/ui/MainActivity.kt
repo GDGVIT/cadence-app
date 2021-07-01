@@ -2,6 +2,7 @@ package com.dscvit.cadence.ui
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.PixelFormat
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -20,6 +21,11 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: LoginViewModel by viewModels()
     private val viewModel2: HomeViewModel by viewModels()
     private lateinit var prefs: SharedPreferences
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        window.setFormat(PixelFormat.RGBA_8888)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

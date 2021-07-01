@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -41,7 +42,6 @@ class HomeFragment : Fragment() {
     lateinit var imageUrl: String
     var firstTime = true
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,21 +52,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.alarmView.apply {
-            val paint = digitalClock.paint
-            val width = paint.measureText(digitalClock.text.toString())
-            val textShader: Shader = LinearGradient(
-                0f, 0f, width, digitalClock.textSize, intArrayOf(
-                    requireContext().getColor(R.color.orange_light),
-                    requireContext().getColor(R.color.pink_light),
-                ), null, Shader.TileMode.CLAMP
-            )
-
-            digitalClock.paint.shader = textShader
-        }
-
-        binding.syncPlaylist.hide()
-
         binding.bottomNav.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.playlists -> {
@@ -105,9 +90,29 @@ class HomeFragment : Fragment() {
             .placeholder(R.drawable.profile_pic_placeholder)
             .into(binding.profilePic)
 
+        binding.syncPlaylist.hide()
 
         binding.syncPlaylist.setOnClickListener {
+            binding.loadingPlaylists.show()
             viewModel.isSyncing(true)
+        }
+
+        binding.addAlarm.setOnClickListener {
+            requireView().findNavController()
+                .navigate(R.id.home_to_add_alarm)
+        }
+
+        binding.alarmView.apply {
+            val paint = digitalClock.paint
+            val width = paint.measureText("00:00 AM")
+            val textShader: Shader = LinearGradient(
+                0f, 0f, width, digitalClock.textSize, intArrayOf(
+                    requireContext().getColor(R.color.orange_light),
+                    requireContext().getColor(R.color.pink_light),
+                ), null, Shader.TileMode.CLAMP
+            )
+
+            digitalClock.paint.shader = textShader
         }
 
         viewModel.token.observe(viewLifecycleOwner, { t ->
@@ -140,14 +145,16 @@ class HomeFragment : Fragment() {
                         apply()
                     }
 
-                    imageUrl = result.images[0].url
-                    Glide.with(requireContext())
-                        .load(imageUrl)
-                        .transition(withCrossFade(factory))
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .placeholder(R.drawable.profile_pic_placeholder)
-                        .into(binding.profilePic)
+                    if (imageUrl != result.images[0].url) {
+                        imageUrl = result.images[0].url
+                        Glide.with(requireContext())
+                            .load(imageUrl)
+                            .transition(withCrossFade(factory))
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .placeholder(R.drawable.profile_pic_placeholder)
+                            .into(binding.profilePic)
+                    }
                 })
 
             val connectionParams = ConnectionParams.Builder(CLIENT_ID)
@@ -176,6 +183,7 @@ class HomeFragment : Fragment() {
             viewModel.spotifyRespPlay.observe(
                 viewLifecycleOwner,
                 { result ->
+                    binding.loadingPlaylists.hide()
                     if (firstTime) {
                         playlistAdapter =
                             PlaylistAdapter(result.items, viewModel.spotifyAppRemote.value!!)
@@ -192,6 +200,10 @@ class HomeFragment : Fragment() {
                 })
         } catch (e: Exception) {
             Toast.makeText(context, "Something went wrong :(", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.profilePic.setOnClickListener {
+            Toast.makeText(context, "Wanna logout? Nub", Toast.LENGTH_LONG).show()
         }
     }
 

@@ -52,7 +52,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/playlists"
         android:layout_width="match_parent"
@@ -97,6 +96,14 @@
         android:tooltipText="Sync"
         app:borderWidth="0dp"
         app:srcCompat="@drawable/ic_rsync" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/loading_playlists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottomNav"
+        android:indeterminate="true"
+        app:trackThickness="1dp" />
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

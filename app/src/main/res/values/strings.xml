@@ -13,4 +13,13 @@
     <string name="continue_consent">Continue</string>
     <string name="alarms">Alarms</string>
     <string name="playlists">Playlists</string>
+    <string name="set_alarm">Set Alarm</string>
+    <string name="mon">M</string>
+    <string name="tue">T</string>
+    <string name="wed">W</string>
+    <string name="thu">T</string>
+    <string name="fri">F</string>
+    <string name="sat">S</string>
+    <string name="sun">S</string>
+    <string name="confirm">Confirm</string>
 </resources>
