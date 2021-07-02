@@ -2,8 +2,8 @@
 <a href="https://dscvit.com">
 	<img src="https://user-images.githubusercontent.com/30529572/72455010-fb38d400-37e7-11ea-9c1e-8cdeb5f5906e.png" alt="DSC VIT"/>
 </a>
-	<h2 align="center">VITTY</h2>
-	<h4 align="center">Android App for Time Table</h4>
+	<h2 align="center">Cadence</h2>
+	<h4 align="center">An Android app which uses ML to find the perfect song for you based on the type of your alarm</h4>
 </p>
 
 ---
@@ -15,25 +15,22 @@
 
 
 ## Features
-- [ ]   Fetching user's playlist
+- [x]   Fetching user's playlist
 - [ ]   Can be used as a normal alarm app 
 - [ ]   Flexible labels 
-- [ ]   ML to anticipate alarm 
+- [ ]   ML to anticipate alarm song
  
 <br>
 
 ## Dependencies
- - < Spotify SDK >
- - < Spotify web API >
+ - Spotify SDK
+ - Spotify web API
 
 
 ## Running
 
-
-< directions to install > 
-```bash
-link to app will be added here
-```
+- Import the project in Android Studio
+- Run the project using the automatically added APP configuration
 
 ## Contributors
 
