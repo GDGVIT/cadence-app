@@ -17,13 +17,13 @@
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textSize="50sp"
+        android:visibility="gone"
         tools:text="10:30 am" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/alarms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/topAppBar"
         android:clipToPadding="false"
         android:overScrollMode="never"
         android:paddingTop="10dp"

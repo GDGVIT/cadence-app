@@ -22,4 +22,9 @@
     <string name="sat">S</string>
     <string name="sun">S</string>
     <string name="confirm">Confirm</string>
+    <string name="alarm_name_title">Alarm Name</string>
+    <string name="time">Time</string>
+    <string name="repeat">Repeat</string>
+    <string name="title_playlist">Playlist</string>
+    <string name="select_time">Select Time</string>
 </resources>
