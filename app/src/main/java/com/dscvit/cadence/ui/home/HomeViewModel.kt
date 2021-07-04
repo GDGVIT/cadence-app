@@ -56,7 +56,7 @@ class HomeViewModel
     private val _token = MutableLiveData<String>()
     val token: LiveData<String> get() = _token
 
-    fun setToken(t: String) {
+    private fun setToken(t: String) {
         _token.value = t
         spotifyRequest()
         playlistRequest()

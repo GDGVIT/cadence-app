@@ -3,7 +3,7 @@ package com.dscvit.cadence.model.alarm
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "alarm")
+@Entity(tableName = "alarms")
 data class Alarm(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
