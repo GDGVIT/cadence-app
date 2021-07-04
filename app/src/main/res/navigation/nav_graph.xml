@@ -57,11 +57,11 @@
         android:name="com.dscvit.cadence.ui.alarm.AddAlarmFragment"
         android:label="fragment_add_alarm"
         tools:layout="@layout/fragment_add_alarm">
-                <action
-                    android:id="@+id/add_alarm_to_home"
-                    app:destination="@id/homeFragment"
-                    app:popUpTo="@+id/nav_graph"
-                    app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/add_alarm_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
 
 </navigation>
