@@ -50,14 +50,10 @@ class AddAlarmFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prefs = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        val isSystem24Hour = is24HourFormat(requireContext())
-        val formatTime =
-            SimpleDateFormat(if (isSystem24Hour) "hh:mm" else "h:mm a", Locale.getDefault())
+        viewModel.setIs24Hr(is24HourFormat(requireContext()))
         binding.apply {
-            val time: String = formatTime.format(Date())
-            digitalClock.text = time
             val paint = digitalClock.paint
-            val width = paint.measureText(time)
+            val width = paint.measureText(viewModel.time.value)
             val textShader: Shader = LinearGradient(
                 0f, 0f, width, digitalClock.textSize, intArrayOf(
                     requireContext().getColor(R.color.orange_light),
@@ -72,17 +68,21 @@ class AddAlarmFragment : Fragment() {
                 .navigate(R.id.add_alarm_to_home)
         }
 
-        binding.digitalClock.setOnClickListener {
-            val picker =
-                MaterialTimePicker.Builder()
-                    .setTimeFormat(if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
-                    .build()
-            picker.show(childFragmentManager, "fragment_tag")
-            picker.addOnPositiveButtonClickListener {
-                val simpleDateFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
-                val timeDate: Date = simpleDateFormat.parse("${picker.hour}:${picker.minute}")!!
-                val time: String = formatTime.format(timeDate)
-                binding.digitalClock.text = time
+        binding.digitalClock.apply {
+
+            viewModel.time.observe(viewLifecycleOwner, { t ->
+                text = t
+            })
+
+            setOnClickListener {
+                val picker =
+                    MaterialTimePicker.Builder()
+                        .setTimeFormat(if (viewModel.is24hr.value == true) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
+                        .build()
+                picker.show(childFragmentManager, "fragment_tag")
+                picker.addOnPositiveButtonClickListener {
+                    viewModel.setTime(picker.hour, picker.minute, viewModel.is24hr.value == true)
+                }
             }
         }
     }
