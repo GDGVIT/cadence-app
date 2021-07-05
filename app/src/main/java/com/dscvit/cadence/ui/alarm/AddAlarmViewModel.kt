@@ -3,7 +3,7 @@ package com.dscvit.cadence.ui.alarm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.dscvit.cadence.model.playlist.Item
+import com.dscvit.cadence.model.alarm.Alarm
 import com.dscvit.cadence.repository.AlarmRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
@@ -55,6 +55,26 @@ class AddAlarmViewModel
     val selectedPlaylist: LiveData<Int> get() = _selectedPlaylist
     private fun setSelectedPlaylist(r: Int) {
         _selectedPlaylist.value = r
+    }
+
+    suspend fun insertAlarm(name: String, days: List<Boolean>, pid: String): Long {
+        val alarm = Alarm(
+            0L,
+            name,
+            hour.value!!,
+            min.value!!,
+            days[0],
+            days[1],
+            days[2],
+            days[3],
+            days[4],
+            days[5],
+            days[6],
+            pid,
+            "",
+            true
+        )
+        return repository.insertAlarm(alarm)
     }
 
     init {

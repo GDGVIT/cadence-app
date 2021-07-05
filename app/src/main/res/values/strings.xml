@@ -27,4 +27,5 @@
     <string name="repeat">Repeat</string>
     <string name="title_playlist">Playlist</string>
     <string name="select_time">Select Time</string>
+    <string name="change">Change</string>
 </resources>
