@@ -24,10 +24,11 @@ class HomeViewModel
     private val refreshToken: LiveData<String> get() = _refreshToken
 
     fun setRefreshToken(r: String) {
-        _refreshToken.value = r
-        getTokenData()
+        if (r != _refreshToken.value) {
+            _refreshToken.value = r
+            getTokenData()
+        }
     }
-
 
     private val _tokenData = MutableLiveData<RefreshTokenData>()
     val tokenData: LiveData<RefreshTokenData>
@@ -55,7 +56,6 @@ class HomeViewModel
 
     private val _token = MutableLiveData<String>()
     val token: LiveData<String> get() = _token
-
     private fun setToken(t: String) {
         _token.value = t
         spotifyRequest()
@@ -65,7 +65,6 @@ class HomeViewModel
     private val _resp = MutableLiveData<UserData>()
     val spotifyResp: LiveData<UserData>
         get() = _resp
-
 
     private fun spotifyRequest() = viewModelScope.launch {
         if (token.value != null) {
@@ -86,7 +85,6 @@ class HomeViewModel
     val spotifyRespPlay: LiveData<PlaylistData>
         get() = _respPlay
 
-
     private fun playlistRequest() = viewModelScope.launch {
         if (token.value != null) {
             Timber.d("STARTING2... ${token.value}")
@@ -104,23 +102,30 @@ class HomeViewModel
 
     private val _isSyncing = MutableLiveData<Boolean>()
     val isSyncing: LiveData<Boolean> get() = _isSyncing
-
     fun isSyncing(sync: Boolean) {
         _isSyncing.value = sync
     }
 
     private val _isSuccessful = MutableLiveData<Boolean>()
     val isSuccessful: LiveData<Boolean> get() = _isSuccessful
-
     fun isSuccessful(success: Boolean) {
         _isSuccessful.value = success
     }
 
     private val _spotifyAppRemote = MutableLiveData<SpotifyAppRemote>()
     val spotifyAppRemote: LiveData<SpotifyAppRemote> get() = _spotifyAppRemote
-
     fun spotifyAppRemote(success: SpotifyAppRemote) {
         _spotifyAppRemote.value = success
+    }
+
+    private val _page = MutableLiveData<Int>()
+    val page: LiveData<Int> get() = _page
+    fun setPage(r: Int) {
+        _page.value = r
+    }
+
+    init {
+        setPage(0)
     }
 
 }

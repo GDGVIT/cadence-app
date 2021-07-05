@@ -63,14 +63,16 @@
         android:paddingBottom="100dp"
         android:visibility="gone" />
 
-    <include
-        android:id="@+id/alarmView"
-        layout="@layout/fragment_home_alarms"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/alarms"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@id/bottomNav"
         android:layout_below="@id/topAppBar"
-        android:visibility="visible" />
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingTop="10dp"
+        android:paddingBottom="100dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addAlarm"

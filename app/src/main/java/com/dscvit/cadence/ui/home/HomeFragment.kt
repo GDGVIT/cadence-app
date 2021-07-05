@@ -53,29 +53,32 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.bottomNav.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
+            viewModel.setPage(item.itemId)
+            true
+        }
+
+        viewModel.page.observe(viewLifecycleOwner, { p ->
+            when (p) {
                 R.id.playlists -> {
                     binding.apply {
                         titleBar.text = context?.getString(R.string.playlists) ?: "Playlists"
-                        alarmView.contentAlarms.visibility = View.GONE
+                        alarms.visibility = View.GONE
                         playlists.visibility = View.VISIBLE
                         addAlarm.hide()
                         syncPlaylist.show()
                     }
-                    true
                 }
                 else -> {
                     binding.apply {
                         titleBar.text = context?.getString(R.string.alarms) ?: "Alarms"
                         playlists.visibility = View.GONE
-                        alarmView.contentAlarms.visibility = View.VISIBLE
+                        alarms.visibility = View.VISIBLE
                         addAlarm.show()
                         syncPlaylist.hide()
                     }
-                    true
                 }
             }
-        }
+        })
 
         prefs = requireContext().getSharedPreferences("user_data", MODE_PRIVATE)
 //        token = prefs.getString("token", "").toString()
@@ -100,19 +103,6 @@ class HomeFragment : Fragment() {
         binding.addAlarm.setOnClickListener {
             requireView().findNavController()
                 .navigate(R.id.home_to_add_alarm)
-        }
-
-        binding.alarmView.apply {
-            val paint = digitalClock.paint
-            val width = paint.measureText("00:00 AM")
-            val textShader: Shader = LinearGradient(
-                0f, 0f, width, digitalClock.textSize, intArrayOf(
-                    requireContext().getColor(R.color.orange_light),
-                    requireContext().getColor(R.color.pink_light),
-                ), null, Shader.TileMode.CLAMP
-            )
-
-            digitalClock.paint.shader = textShader
         }
 
         viewModel.token.observe(viewLifecycleOwner, { t ->

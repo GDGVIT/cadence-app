@@ -3,6 +3,7 @@ package com.dscvit.cadence.ui.alarm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.dscvit.cadence.model.playlist.Item
 import com.dscvit.cadence.repository.AlarmRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
@@ -26,13 +27,13 @@ class AddAlarmViewModel
     }
 
     private val _hour = MutableLiveData<Int>()
-    private val hour: LiveData<Int> get() = _hour
+    val hour: LiveData<Int> get() = _hour
     private fun setHour(r: Int) {
         _hour.value = r
     }
 
     private val _min = MutableLiveData<Int>()
-    private val min: LiveData<Int> get() = _min
+    val min: LiveData<Int> get() = _min
     private fun setMinute(r: Int) {
         _min.value = r
     }
@@ -48,5 +49,15 @@ class AddAlarmViewModel
         val simpleDateFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
         val timeDate: Date = simpleDateFormat.parse(t)!!
         _time.value = formatTime.format(timeDate)
+    }
+
+    private val _selectedPlaylist = MutableLiveData<Int>()
+    val selectedPlaylist: LiveData<Int> get() = _selectedPlaylist
+    private fun setSelectedPlaylist(r: Int) {
+        _selectedPlaylist.value = r
+    }
+
+    init {
+        setSelectedPlaylist(0)
     }
 }

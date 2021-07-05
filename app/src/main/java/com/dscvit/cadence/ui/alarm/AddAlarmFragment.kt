@@ -13,18 +13,22 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
 import com.dscvit.cadence.databinding.FragmentAddAlarmBinding
+import com.dscvit.cadence.ui.home.HomeViewModel
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.SimpleDateFormat
-import java.util.*
 
 @AndroidEntryPoint
 class AddAlarmFragment : Fragment() {
 
     private val viewModel by activityViewModels<AddAlarmViewModel>()
+    private val viewModelPlaylists by activityViewModels<HomeViewModel>()
     private var _binding: FragmentAddAlarmBinding? = null
     private val binding get() = _binding!!
     private lateinit var prefs: SharedPreferences
@@ -78,6 +82,8 @@ class AddAlarmFragment : Fragment() {
                 val picker =
                     MaterialTimePicker.Builder()
                         .setTimeFormat(if (viewModel.is24hr.value == true) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
+                        .setHour((if (viewModel.hour.value != null) viewModel.hour.value else 0)!!)
+                        .setMinute((if (viewModel.min.value != null) viewModel.min.value else 0)!!)
                         .build()
                 picker.show(childFragmentManager, "fragment_tag")
                 picker.addOnPositiveButtonClickListener {
@@ -85,6 +91,44 @@ class AddAlarmFragment : Fragment() {
                 }
             }
         }
+
+        viewModel.selectedPlaylist.observe(viewLifecycleOwner, { pn ->
+            val playLen = viewModelPlaylists.spotifyRespPlay.value?.items?.size
+            setPlaylistLayout(playLen, pn)
+        })
+
+        viewModelPlaylists.spotifyRespPlay.observe(viewLifecycleOwner, { playlist ->
+            val playLen = playlist.items.size
+            val pn = viewModel.selectedPlaylist.value
+            if (pn != null) {
+                setPlaylistLayout(playLen, pn)
+            }
+        })
     }
 
+    private fun setPlaylistLayout(playLen: Int?, pn: Int) {
+        var playNum = pn
+        binding.apply {
+            if (playLen != null && playLen > 0) {
+                if (playNum > playLen || playNum < 0)
+                    playNum = 0
+                val currPlaylist =
+                    viewModelPlaylists.spotifyRespPlay.value?.items?.get(playNum)
+                if (currPlaylist != null) {
+                    playlistName.text = currPlaylist.name
+                    playlistArtist.text = "by ${currPlaylist.owner.display_name}"
+                    val factory =
+                        DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
+
+                    Glide.with(playlistImage.context)
+                        .load(currPlaylist.images[0].url)
+                        .transition(DrawableTransitionOptions.withCrossFade(factory))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .placeholder(R.drawable.profile_pic_placeholder)
+                        .into(playlistImage)
+                }
+            }
+        }
+    }
 }
