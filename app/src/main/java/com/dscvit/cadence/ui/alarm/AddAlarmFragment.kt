@@ -111,6 +111,11 @@ class AddAlarmFragment : Fragment() {
             }
         }
 
+        binding.changeBtn.setOnClickListener {
+            requireView().findNavController()
+                .navigate(R.id.add_alarm_to_playlist)
+        }
+
         viewModel.selectedPlaylist.observe(viewLifecycleOwner, { pn ->
             val playLen = viewModelPlaylists.spotifyRespPlay.value?.items?.size
             setPlaylistLayout(playLen, pn)

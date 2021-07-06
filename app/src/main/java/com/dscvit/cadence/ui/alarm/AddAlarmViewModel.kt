@@ -60,6 +60,12 @@ class AddAlarmViewModel
         _selectedPlaylist.value = r
     }
 
+    private val _playlistId = MutableLiveData<String>()
+    val playlistId: LiveData<String> get() = _playlistId
+    private fun setPlaylistId(r: String) {
+        _playlistId.value = r
+    }
+
     fun insertAlarm(name: String, days: List<Boolean>, pid: String): Long {
         val alarm = Alarm(
             alarmName = name,
@@ -72,7 +78,7 @@ class AddAlarmViewModel
             friday = days[4],
             saturday = days[5],
             sunday = days[6],
-            playlistId = pid,
+            playlistId = playlistId.value!!,
             songId = "DEMO",
             isOn = true
         )

@@ -62,6 +62,21 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/add_alarm_to_playlist"
+            app:destination="@id/playlistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.dscvit.cadence.ui.alarm.PlaylistsFragment"
+        android:label="fragment_playlists"
+        tools:layout="@layout/fragment_playlists">
+        <!--        <action-->
+        <!--            android:id="@+id/playlist_to_add_alarm"-->
+        <!--            app:destination="@id/addAlarmFragment"-->
+        <!--            app:popUpTo="@+id/nav_graph"-->
+        <!--            app:popUpToInclusive="true" />-->
     </fragment>
 
 </navigation>
