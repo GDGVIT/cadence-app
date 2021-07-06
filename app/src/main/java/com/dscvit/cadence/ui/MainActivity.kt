@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.dscvit.cadence.R
 import com.dscvit.cadence.ui.home.HomeViewModel
 import com.dscvit.cadence.ui.login.LoginViewModel
-import com.dscvit.cadence.utils.SpotifyConstants
+import com.dscvit.cadence.util.SpotifyConstants
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse

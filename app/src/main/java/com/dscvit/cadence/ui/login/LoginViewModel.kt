@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dscvit.cadence.model.token.TokenData
 import com.dscvit.cadence.repository.SpotifyRepository
-import com.dscvit.cadence.utils.SpotifyConstants.CLIENT_DETAILS_ENCODED
-import com.dscvit.cadence.utils.SpotifyConstants.REDIRECT_URI
+import com.dscvit.cadence.util.SpotifyConstants.CLIENT_DETAILS_ENCODED
+import com.dscvit.cadence.util.SpotifyConstants.REDIRECT_URI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber

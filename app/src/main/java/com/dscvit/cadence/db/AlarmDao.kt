@@ -1,6 +1,5 @@
 package com.dscvit.cadence.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.dscvit.cadence.model.alarm.Alarm
 

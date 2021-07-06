@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.dscvit.cadence.api.ApiService
 import com.dscvit.cadence.db.AlarmDatabase
-import com.dscvit.cadence.utils.SpotifyConstants.BASE_URL
+import com.dscvit.cadence.util.SpotifyConstants.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

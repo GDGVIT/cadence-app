@@ -10,9 +10,10 @@ import com.dscvit.cadence.model.token.RefreshTokenData
 import com.dscvit.cadence.model.user.UserData
 import com.dscvit.cadence.repository.AlarmRepository
 import com.dscvit.cadence.repository.SpotifyRepository
-import com.dscvit.cadence.utils.SpotifyConstants
+import com.dscvit.cadence.util.SpotifyConstants
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -131,8 +132,16 @@ class HomeViewModel
     val alarmsList: LiveData<List<Alarm>>
         get() = _alarmsList
 
-    suspend fun getAllAlarms() {
-        _alarmsList.postValue(alarmRepository.getAllAlarms())
+    fun getAllAlarms() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _alarmsList.postValue(alarmRepository.getAllAlarms())
+        }
+    }
+
+    fun updateAlarm(alarm: Alarm) {
+        viewModelScope.launch(Dispatchers.IO) {
+            alarmRepository.updateAlarm(alarm)
+        }
     }
 
     init {

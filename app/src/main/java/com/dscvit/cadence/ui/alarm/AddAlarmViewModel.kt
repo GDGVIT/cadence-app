@@ -3,9 +3,12 @@ package com.dscvit.cadence.ui.alarm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.dscvit.cadence.model.alarm.Alarm
 import com.dscvit.cadence.repository.AlarmRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -45,7 +48,7 @@ class AddAlarmViewModel
         setMinute(min)
         val t = "${hr}:${min}"
         val formatTime =
-            SimpleDateFormat(if (is24hr) "hh:mm" else "h:mm a", Locale.getDefault())
+            SimpleDateFormat(if (is24hr) "HH:mm" else "h:mm a", Locale.getDefault())
         val simpleDateFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
         val timeDate: Date = simpleDateFormat.parse(t)!!
         _time.value = formatTime.format(timeDate)
@@ -57,7 +60,7 @@ class AddAlarmViewModel
         _selectedPlaylist.value = r
     }
 
-    suspend fun insertAlarm(name: String, days: List<Boolean>, pid: String): Long {
+    fun insertAlarm(name: String, days: List<Boolean>, pid: String): Long {
         val alarm = Alarm(
             alarmName = name,
             hour = hour.value!!,
@@ -73,7 +76,11 @@ class AddAlarmViewModel
             songId = "DEMO",
             isOn = true
         )
-        return repository.insertAlarm(alarm)
+        var id: Long = 0
+        viewModelScope.launch(Dispatchers.IO) {
+            id = repository.insertAlarm(alarm)
+        }
+        return id
     }
 
     init {

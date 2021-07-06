@@ -23,8 +23,6 @@ import com.dscvit.cadence.ui.home.HomeViewModel
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AddAlarmFragment : Fragment() {
@@ -75,13 +73,20 @@ class AddAlarmFragment : Fragment() {
         }
 
         binding.nextBtn.setOnClickListener {
-            GlobalScope.launch {
-                viewModel.insertAlarm(
-                    binding.alarmEditField.text.toString(),
-                    listOf(true, true, true, true, true, true, true),
-                    "ABC"
-                )
-            }
+            viewModel.insertAlarm(
+                binding.alarmEditField.text.toString(),
+                listOf(
+                    binding.toggleMon.isChecked,
+                    binding.toggleTue.isChecked,
+                    binding.toggleWed.isChecked,
+                    binding.toggleThu.isChecked,
+                    binding.toggleFri.isChecked,
+                    binding.toggleSat.isChecked,
+                    binding.toggleSun.isChecked,
+                ),
+                "ABC"
+            )
+
             requireView().findNavController()
                 .navigate(R.id.add_alarm_to_home)
         }

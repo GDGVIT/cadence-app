@@ -57,6 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/topAppBar"
+        android:layout_above="@id/bottomNav"
         android:clipToPadding="false"
         android:overScrollMode="never"
         android:paddingTop="10dp"
@@ -71,7 +72,7 @@
         android:layout_below="@id/topAppBar"
         android:clipToPadding="false"
         android:overScrollMode="never"
-        android:paddingTop="10dp"
+        android:paddingTop="5dp"
         android:paddingBottom="100dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -81,7 +82,6 @@
         android:layout_above="@id/bottomNav"
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
-        android:backgroundTint="@color/pink"
         android:contentDescription="TODO"
         android:tooltipText="Add Alarm"
         app:borderWidth="0dp"
@@ -94,6 +94,7 @@
         android:layout_above="@id/bottomNav"
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
+        android:backgroundTint="@color/spotify_green"
         android:contentDescription="TODO"
         android:tooltipText="Sync"
         app:borderWidth="0dp"

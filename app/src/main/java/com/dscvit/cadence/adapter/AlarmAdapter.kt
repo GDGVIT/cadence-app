@@ -1,5 +1,6 @@
 package com.dscvit.cadence.adapter
 
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,16 +8,21 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dscvit.cadence.R
 import com.dscvit.cadence.model.alarm.Alarm
+import com.dscvit.cadence.util.OnToggleAlarmListener
 import com.google.android.material.switchmaterial.SwitchMaterial
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AlarmAdapter(
-    private var alarms: List<Alarm>
+    private var alarms: List<Alarm>,
+    private val switchListener: OnToggleAlarmListener
 ) :
     RecyclerView.Adapter<AlarmAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val alarmName: TextView = view.findViewById(R.id.alarmName)
         val alarmTime: TextView = view.findViewById(R.id.alarmTime)
+        val alarmDays: TextView = view.findViewById(R.id.alarmDays)
         val alarmSwitch: SwitchMaterial = view.findViewById(R.id.alarmSwitch)
     }
 
@@ -33,7 +39,30 @@ class AlarmAdapter(
         viewHolder.apply {
             alarmName.text = alarm.alarmName
             alarmSwitch.isChecked = alarm.isOn
-            alarmTime.text = "${alarm.hour}:${alarm.minute}"
+            val is24hr = DateFormat.is24HourFormat(itemView.context)
+            val t = "${alarm.hour}:${alarm.minute}"
+            val formatTime =
+                SimpleDateFormat(if (is24hr) "HH:mm" else "h:mm a", Locale.getDefault())
+            val simpleDateFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
+            val timeDate: Date = simpleDateFormat.parse(t)!!
+            alarmTime.text = formatTime.format(timeDate)
+
+            var days = ""
+            if (alarm.monday) days += "Mon, "
+            if (alarm.tuesday) days += "Tue, "
+            if (alarm.wednesday) days += "Wed, "
+            if (alarm.thursday) days += "Thu, "
+            if (alarm.friday) days += "Fri, "
+            if (alarm.saturday) days += "Sat, "
+            if (alarm.sunday) days += "Sun, "
+            if (days != "") days = days.substring(0, days.length - 2)
+            if (days == "") days = "No Repeat"
+            alarmDays.text = days
+
+            alarmSwitch.setOnCheckedChangeListener { _, isChecked ->
+                alarm.isOn = isChecked
+                switchListener.onToggle(alarm)
+            }
         }
     }
 
