@@ -59,20 +59,19 @@ class AddAlarmViewModel
 
     suspend fun insertAlarm(name: String, days: List<Boolean>, pid: String): Long {
         val alarm = Alarm(
-            0L,
-            name,
-            hour.value!!,
-            min.value!!,
-            days[0],
-            days[1],
-            days[2],
-            days[3],
-            days[4],
-            days[5],
-            days[6],
-            pid,
-            "",
-            true
+            alarmName = name,
+            hour = hour.value!!,
+            minute = min.value!!,
+            monday = days[0],
+            tuesday = days[1],
+            wednesday = days[2],
+            thursday = days[3],
+            friday = days[4],
+            saturday = days[5],
+            sunday = days[6],
+            playlistId = pid,
+            songId = "DEMO",
+            isOn = true
         )
         return repository.insertAlarm(alarm)
     }

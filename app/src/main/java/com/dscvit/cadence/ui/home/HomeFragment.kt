@@ -2,8 +2,6 @@ package com.dscvit.cadence.ui.home
 
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.graphics.LinearGradient
-import android.graphics.Shader
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
+import com.dscvit.cadence.adapter.AlarmAdapter
 import com.dscvit.cadence.adapter.PlaylistAdapter
 import com.dscvit.cadence.databinding.FragmentHomeBinding
 import com.dscvit.cadence.utils.SpotifyConstants.CLIENT_ID
@@ -26,6 +25,8 @@ import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -40,7 +41,9 @@ class HomeFragment : Fragment() {
     lateinit var token: String
     lateinit var refToken: String
     lateinit var imageUrl: String
+    lateinit var alarmAdapter: AlarmAdapter
     var firstTime = true
+    var firstTimeAlarm = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -104,6 +107,26 @@ class HomeFragment : Fragment() {
             requireView().findNavController()
                 .navigate(R.id.home_to_add_alarm)
         }
+
+        GlobalScope.launch {
+            viewModel.getAllAlarms()
+        }
+        viewModel.alarmsList.observe(viewLifecycleOwner, { t ->
+            if (t != null) {
+                if (firstTimeAlarm) {
+                    alarmAdapter = AlarmAdapter(t)
+                    binding.alarms.apply {
+                        layoutManager = LinearLayoutManager(context)
+                        setHasFixedSize(true)
+                        adapter = alarmAdapter
+                    }
+                    firstTimeAlarm = false
+                } else {
+                    alarmAdapter.dataSetChange(t)
+                    alarmAdapter.notifyDataSetChanged()
+                }
+            }
+        })
 
         viewModel.token.observe(viewLifecycleOwner, { t ->
             if (t != "" && t != null) {

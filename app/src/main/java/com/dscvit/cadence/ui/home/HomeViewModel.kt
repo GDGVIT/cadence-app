@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dscvit.cadence.model.alarm.Alarm
 import com.dscvit.cadence.model.playlist.PlaylistData
 import com.dscvit.cadence.model.token.RefreshTokenData
 import com.dscvit.cadence.model.user.UserData
+import com.dscvit.cadence.repository.AlarmRepository
 import com.dscvit.cadence.repository.SpotifyRepository
 import com.dscvit.cadence.utils.SpotifyConstants
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -18,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel
 @Inject constructor(
-    private val repository: SpotifyRepository
+    private val repository: SpotifyRepository,
+    private val alarmRepository: AlarmRepository
 ) : ViewModel() {
     private val _refreshToken = MutableLiveData<String>()
     private val refreshToken: LiveData<String> get() = _refreshToken
@@ -122,6 +125,14 @@ class HomeViewModel
     val page: LiveData<Int> get() = _page
     fun setPage(r: Int) {
         _page.value = r
+    }
+
+    private val _alarmsList = MutableLiveData<List<Alarm>>()
+    val alarmsList: LiveData<List<Alarm>>
+        get() = _alarmsList
+
+    suspend fun getAllAlarms() {
+        _alarmsList.postValue(alarmRepository.getAllAlarms())
     }
 
     init {
