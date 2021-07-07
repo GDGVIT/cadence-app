@@ -9,6 +9,6 @@ class AlarmRepository @Inject constructor(
 ) {
     suspend fun insertAlarm(alarm: Alarm): Long = alarmDao.insertAlarm(alarm)
     suspend fun updateAlarm(alarm: Alarm) = alarmDao.updateAlarm(alarm)
-    suspend fun deleteAlarm(alarm: Alarm) = alarmDao.deleteAlarm(alarm)
+    suspend fun deleteAlarm(alarmId: Long) = alarmDao.deleteAlarm(alarmId)
     suspend fun getAllAlarms(): List<Alarm> = alarmDao.getAllAlarms()
 }

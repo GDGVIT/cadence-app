@@ -2,6 +2,7 @@ package com.dscvit.cadence.util
 
 import com.dscvit.cadence.model.alarm.Alarm
 
-interface OnToggleAlarmListener {
+interface OnEditAlarmListener {
     fun onToggle(alarm: Alarm)
+    fun onDelete(alarm: Alarm)
 }

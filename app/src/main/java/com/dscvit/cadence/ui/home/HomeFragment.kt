@@ -20,7 +20,7 @@ import com.dscvit.cadence.adapter.AlarmAdapter
 import com.dscvit.cadence.adapter.PlaylistAdapter
 import com.dscvit.cadence.databinding.FragmentHomeBinding
 import com.dscvit.cadence.model.alarm.Alarm
-import com.dscvit.cadence.util.OnToggleAlarmListener
+import com.dscvit.cadence.util.OnEditAlarmListener
 import com.dscvit.cadence.util.SpotifyConstants.CLIENT_ID
 import com.dscvit.cadence.util.SpotifyConstants.REDIRECT_URI
 import com.spotify.android.appremote.api.ConnectionParams
@@ -107,15 +107,18 @@ class HomeFragment : Fragment() {
                 .navigate(R.id.home_to_add_alarm)
         }
 
-
         viewModel.getAllAlarms()
 
         viewModel.alarmsList.observe(viewLifecycleOwner, { t ->
             if (t != null) {
                 if (firstTimeAlarm) {
-                    alarmAdapter = AlarmAdapter(t, object : OnToggleAlarmListener {
+                    alarmAdapter = AlarmAdapter(t, object : OnEditAlarmListener {
                         override fun onToggle(alarm: Alarm) {
                             viewModel.updateAlarm(alarm)
+                        }
+
+                        override fun onDelete(alarm: Alarm) {
+                            viewModel.deleteAlarm(alarm.id!!)
                         }
                     })
                     binding.alarms.apply {

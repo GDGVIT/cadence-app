@@ -5,10 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dscvit.cadence.model.alarm.Alarm
+import com.dscvit.cadence.model.ml.Song
+import com.dscvit.cadence.model.song.TracksData
 import com.dscvit.cadence.repository.AlarmRepository
+import com.dscvit.cadence.repository.SpotifyRepository
+import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -16,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddAlarmViewModel
 @Inject constructor(
-    private val repository: AlarmRepository
+    private val repository: AlarmRepository,
+    private val repositoryApi: SpotifyRepository
 ) : ViewModel() {
     private val _is24hr = MutableLiveData<Boolean>()
     val is24hr: LiveData<Boolean> get() = _is24hr
@@ -61,32 +67,80 @@ class AddAlarmViewModel
     }
 
     private val _playlistId = MutableLiveData<String>()
-    val playlistId: LiveData<String> get() = _playlistId
+    private val playlistId: LiveData<String> get() = _playlistId
     fun setPlaylistId(r: String) {
         _playlistId.value = r
     }
 
-    fun insertAlarm(name: String, days: List<Boolean>, pid: String): Long {
-        val alarm = Alarm(
-            alarmName = name,
-            hour = hour.value!!,
-            minute = min.value!!,
-            monday = days[0],
-            tuesday = days[1],
-            wednesday = days[2],
-            thursday = days[3],
-            friday = days[4],
-            saturday = days[5],
-            sunday = days[6],
-            playlistId = playlistId.value!!,
-            songId = "DEMO",
-            isOn = true
-        )
-        var id: Long = 0
-        viewModelScope.launch(Dispatchers.IO) {
-            id = repository.insertAlarm(alarm)
+    private val _songId = MutableLiveData<Song>()
+    val songId: LiveData<Song> get() = _songId
+
+    fun getSongData(name: String, days: List<Boolean>, token: String) = viewModelScope.launch {
+        val postParam = JsonObject()
+        postParam.addProperty("prompt", name)
+        postParam.addProperty("playlist", playlistId.value)
+        repositoryApi.getSongData(postParam).let { response ->
+            if (response.isSuccessful) {
+                _songId.postValue(response.body())
+                response.body()?.let { insertAlarm(name, days, it, token) }
+            } else {
+                setAlarmInserted(-1)
+                Timber.d("Failed to fetch song")
+            }
         }
-        return id
+    }
+
+    private val _alarmInserted = MutableLiveData<Int>()
+    val alarmInserted: LiveData<Int> get() = _alarmInserted
+    fun setAlarmInserted(r: Int) {
+        _alarmInserted.postValue(r)
+    }
+
+    private fun insertAlarm(name: String, days: List<Boolean>, sid: Song, token: String): Long {
+        if (sid.intent == null || sid.intent == "") sid.intent = "nan"
+        if (sid.song != null && sid.song != "") {
+            val alarm = Alarm(
+                alarmName = name,
+                hour = hour.value!!,
+                minute = min.value!!,
+                monday = days[0],
+                tuesday = days[1],
+                wednesday = days[2],
+                thursday = days[3],
+                friday = days[4],
+                saturday = days[5],
+                sunday = days[6],
+                playlistId = playlistId.value!!,
+                songId = sid.song,
+                type = sid.intent,
+                isOn = true
+            )
+            var id: Long = 0
+            viewModelScope.launch(Dispatchers.IO) {
+                id = repository.insertAlarm(alarm)
+                setAlarmInserted(1)
+                getTracksData(token, sid.song)
+            }
+            return id
+        }
+        Timber.d("WOW: ${playlistId.value} ${sid.song}")
+        setAlarmInserted(-1)
+        return -1
+    }
+
+    private val _trackData = MutableLiveData<TracksData>()
+    val trackData: LiveData<TracksData> get() = _trackData
+
+    private fun getTracksData(token: String, id: String) = viewModelScope.launch {
+        repositoryApi.getTracksData("Bearer $token", id.substring(14, id.length)).let { response ->
+            if (response.isSuccessful) {
+                setAlarmInserted(2)
+                _trackData.postValue(response.body())
+            } else {
+                setAlarmInserted(-1)
+                Timber.d("Failed to fetch song data $token ${response.raw()}")
+            }
+        }
     }
 
     init {

@@ -8,14 +8,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dscvit.cadence.R
 import com.dscvit.cadence.model.alarm.Alarm
-import com.dscvit.cadence.util.OnToggleAlarmListener
+import com.dscvit.cadence.util.OnEditAlarmListener
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AlarmAdapter(
     private var alarms: List<Alarm>,
-    private val switchListener: OnToggleAlarmListener
+    private val switchListener: OnEditAlarmListener
 ) :
     RecyclerView.Adapter<AlarmAdapter.ViewHolder>() {
 
@@ -62,6 +62,11 @@ class AlarmAdapter(
             alarmSwitch.setOnCheckedChangeListener { _, isChecked ->
                 alarm.isOn = isChecked
                 switchListener.onToggle(alarm)
+            }
+
+            itemView.setOnLongClickListener {
+                switchListener.onDelete(alarm)
+                true
             }
         }
     }

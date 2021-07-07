@@ -85,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="20dp"
                 android:fontFamily="@font/poppins_600"
                 android:text="@string/time"
                 android:textSize="22sp" />
@@ -207,7 +207,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="15dp"
+                android:layout_marginTop="15dp"
                 android:orientation="horizontal"
                 android:paddingHorizontal="24dp">
 
@@ -250,7 +250,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginHorizontal="30dp"
+                android:layout_marginHorizontal="20dp"
+                android:padding="10dp"
                 android:text="@string/change"
                 android:textColor="@color/pink" />
         </LinearLayout>

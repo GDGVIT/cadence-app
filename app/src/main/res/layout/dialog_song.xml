@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/grey_alt"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="0dp"
+    app:rippleColor="@color/translucent">
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Unable to fetch :("
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp"
+            android:fontFamily="@font/poppins_600"
+            android:text="Suggested Song"
+            android:textAlignment="center"
+            android:textSize="22sp" />
+
+
+        <ImageView
+            android:id="@+id/songArt"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_margin="10dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/songName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/poppins_600"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/artistName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="20dp"
+            android:alpha="0.7"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            tools:text="TextView" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/continue_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-6dp"
+            android:backgroundTint="@color/grey_alt2"
+            android:enabled="false"
+            android:fontFamily="@font/poppins_600"
+            android:letterSpacing="0"
+            android:padding="15dp"
+            android:text="@string/continue_btn_text"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/pink"
+            android:textSize="16sp"
+            app:cornerRadius="0dp"
+            app:rippleColor="@color/translucent" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -11,8 +11,8 @@ interface AlarmDao {
     @Update
     suspend fun updateAlarm(alarm: Alarm)
 
-    @Delete
-    suspend fun deleteAlarm(alarm: Alarm)
+    @Query("DELETE FROM alarms WHERE id = :alarmId")
+    suspend fun deleteAlarm(alarmId: Long)
 
     @Query("SELECT * FROM alarms")
     suspend fun getAllAlarms(): List<Alarm>

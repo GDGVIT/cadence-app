@@ -144,6 +144,13 @@ class HomeViewModel
         }
     }
 
+    fun deleteAlarm(alarmId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            alarmRepository.deleteAlarm(alarmId)
+            getAllAlarms()
+        }
+    }
+
     init {
         setPage(0)
     }
