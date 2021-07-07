@@ -29,9 +29,9 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:id="@+id/close"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:id="@+id/back"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:adjustViewBounds="true"
                     android:background="?selectableItemBackgroundBorderless"
                     android:scaleType="fitXY"

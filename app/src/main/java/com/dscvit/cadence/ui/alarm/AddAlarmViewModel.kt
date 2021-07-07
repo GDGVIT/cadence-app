@@ -56,13 +56,13 @@ class AddAlarmViewModel
 
     private val _selectedPlaylist = MutableLiveData<Int>()
     val selectedPlaylist: LiveData<Int> get() = _selectedPlaylist
-    private fun setSelectedPlaylist(r: Int) {
+    fun setSelectedPlaylist(r: Int) {
         _selectedPlaylist.value = r
     }
 
     private val _playlistId = MutableLiveData<String>()
     val playlistId: LiveData<String> get() = _playlistId
-    private fun setPlaylistId(r: String) {
+    fun setPlaylistId(r: String) {
         _playlistId.value = r
     }
 

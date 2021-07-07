@@ -84,7 +84,6 @@ class HomeFragment : Fragment() {
         })
 
         prefs = requireContext().getSharedPreferences("user_data", MODE_PRIVATE)
-//        token = prefs.getString("token", "").toString()
         refToken = prefs.getString("refresh_token", "").toString()
         imageUrl = prefs.getString("imageUrl", "").toString()
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()

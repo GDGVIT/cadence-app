@@ -12,10 +12,11 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
 import com.dscvit.cadence.model.playlist.Item
-import com.spotify.android.appremote.api.SpotifyAppRemote
+import com.dscvit.cadence.util.OnSelectPlaylistListener
 
 class PlaylistSelectorAdapter(
-    private var playlists: List<Item>
+    private var playlists: List<Item>,
+    private val selectListener: OnSelectPlaylistListener
 ) :
     RecyclerView.Adapter<PlaylistSelectorAdapter.ViewHolder>() {
 
@@ -28,7 +29,6 @@ class PlaylistSelectorAdapter(
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_playlist, viewGroup, false)
-
         return ViewHolder(view)
     }
 
@@ -46,6 +46,10 @@ class PlaylistSelectorAdapter(
                 .centerCrop()
                 .placeholder(R.drawable.profile_pic_placeholder)
                 .into(imageView)
+
+            itemView.setOnClickListener {
+                selectListener.onSelect(currPlaylist, position)
+            }
         }
     }
 

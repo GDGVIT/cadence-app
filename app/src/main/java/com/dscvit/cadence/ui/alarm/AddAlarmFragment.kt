@@ -139,6 +139,7 @@ class AddAlarmFragment : Fragment() {
                 val currPlaylist =
                     viewModelPlaylists.spotifyRespPlay.value?.items?.get(playNum)
                 if (currPlaylist != null) {
+                    viewModel.setPlaylistId(currPlaylist.id)
                     playlistName.text = currPlaylist.name
                     playlistArtist.text = "by ${currPlaylist.owner.display_name}"
                     val factory =
