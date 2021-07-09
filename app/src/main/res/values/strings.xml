@@ -30,4 +30,5 @@
     <string name="change">Change</string>
     <string name="select_playlists">Playlists</string>
     <string name="continue_btn_text">Continue</string>
+    <string name="dismiss">Dismiss</string>
 </resources>

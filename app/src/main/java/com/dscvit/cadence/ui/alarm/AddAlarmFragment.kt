@@ -40,8 +40,9 @@ class AddAlarmFragment : Fragment() {
         super.onCreate(savedInstanceState)
         activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                requireView().findNavController()
-                    .navigate(R.id.add_alarm_to_home)
+                if (viewModel.alarmInserted.value == 0)
+                    requireView().findNavController()
+                        .navigate(R.id.add_alarm_to_home)
             }
         })
     }
@@ -91,11 +92,17 @@ class AddAlarmFragment : Fragment() {
             )
             .create()
 
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.setCancelable(false)
+
         val continueBtn = v.findViewById<Button>(R.id.continue_btn)
+        val loadingLayout = v.findViewById<LinearLayout>(R.id.loading)
         val songArt = v.findViewById<ImageView>(R.id.songArt)
+        val errorImageView = v.findViewById<ImageView>(R.id.error_image)
         val songName = v.findViewById<TextView>(R.id.songName)
         val songArtist = v.findViewById<TextView>(R.id.artistName)
         val error = v.findViewById<TextView>(R.id.error)
+        val errorDesc = v.findViewById<TextView>(R.id.error_description)
         val progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
         val factory =
             DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
@@ -149,13 +156,14 @@ class AddAlarmFragment : Fragment() {
                 }
                 2 -> {
                     progressBar.setProgress(100, true)
-                    progressBar.visibility = View.GONE
+                    loadingLayout.visibility = View.GONE
                 }
                 1 -> {
                     progressBar.setProgress(90, true)
                 }
                 0 -> {
                     progressBar.setProgress(0, true)
+
                 }
                 4 -> {
                     progressBar.setProgress(70, true)
@@ -163,8 +171,17 @@ class AddAlarmFragment : Fragment() {
                 -1 -> {
                     continueBtn.isEnabled = true
                     progressBar.visibility = View.GONE
-                    error.visibility = View.VISIBLE
-                    Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
+                    errorImageView.visibility = View.VISIBLE
+                    error.text = "Incompatible Playlist"
+                    errorDesc.text = "Please use some other playlist"
+                }
+                -2 -> {
+                    continueBtn.isEnabled = true
+                    progressBar.visibility = View.GONE
+                    errorImageView.visibility = View.VISIBLE
+                    loadingLayout.visibility = View.VISIBLE
+                    error.text = "Fetch Failed!"
+                    errorDesc.text = "Spotify didn't send the song data"
                 }
             }
         })

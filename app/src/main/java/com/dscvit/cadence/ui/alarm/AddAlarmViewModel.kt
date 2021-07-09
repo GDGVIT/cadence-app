@@ -137,7 +137,7 @@ class AddAlarmViewModel
                 setAlarmInserted(2)
                 _trackData.postValue(response.body())
             } else {
-                setAlarmInserted(-1)
+                setAlarmInserted(-2)
                 Timber.d("Failed to fetch song data $token ${response.raw()}")
             }
         }

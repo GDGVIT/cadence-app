@@ -65,8 +65,8 @@ class HomeFragment : Fragment() {
                 R.id.playlists -> {
                     binding.apply {
                         titleBar.text = context?.getString(R.string.playlists) ?: "Playlists"
-                        alarms.visibility = View.GONE
-                        playlists.visibility = View.VISIBLE
+                        alarmLayout.visibility = View.GONE
+                        playlistsLayout.visibility = View.VISIBLE
                         addAlarm.hide()
                         syncPlaylist.show()
                     }
@@ -74,8 +74,8 @@ class HomeFragment : Fragment() {
                 else -> {
                     binding.apply {
                         titleBar.text = context?.getString(R.string.alarms) ?: "Alarms"
-                        playlists.visibility = View.GONE
-                        alarms.visibility = View.VISIBLE
+                        playlistsLayout.visibility = View.GONE
+                        alarmLayout.visibility = View.VISIBLE
                         addAlarm.show()
                         syncPlaylist.hide()
                     }
@@ -111,25 +111,34 @@ class HomeFragment : Fragment() {
 
         viewModel.alarmsList.observe(viewLifecycleOwner, { t ->
             if (t != null) {
-                if (firstTimeAlarm) {
-                    alarmAdapter = AlarmAdapter(t, object : OnEditAlarmListener {
-                        override fun onToggle(alarm: Alarm) {
-                            viewModel.updateAlarm(alarm)
-                        }
+                if (t.isNotEmpty()) {
+                    binding.noAlarms.visibility = View.GONE
+                    if (firstTimeAlarm) {
+                        alarmAdapter = AlarmAdapter(t, object : OnEditAlarmListener {
+                            override fun onToggle(alarm: Alarm) {
+                                viewModel.updateAlarm(alarm)
+                            }
 
-                        override fun onDelete(alarm: Alarm) {
-                            viewModel.deleteAlarm(alarm.id!!)
+                            override fun onDelete(alarm: Alarm) {
+                                viewModel.deleteAlarm(alarm.id!!)
+                            }
+                        })
+                        binding.alarms.apply {
+                            layoutManager = LinearLayoutManager(context)
+                            setHasFixedSize(true)
+                            adapter = alarmAdapter
                         }
-                    })
-                    binding.alarms.apply {
-                        layoutManager = LinearLayoutManager(context)
-                        setHasFixedSize(true)
-                        adapter = alarmAdapter
+                        firstTimeAlarm = false
+                    } else {
+                        alarmAdapter.dataSetChange(t)
+                        alarmAdapter.notifyDataSetChanged()
                     }
-                    firstTimeAlarm = false
                 } else {
-                    alarmAdapter.dataSetChange(t)
-                    alarmAdapter.notifyDataSetChanged()
+                    binding.noAlarms.visibility = View.VISIBLE
+                    if (!firstTimeAlarm) {
+                        alarmAdapter.dataSetChange(t)
+                        alarmAdapter.notifyDataSetChanged()
+                    }
                 }
             }
         })

@@ -52,28 +52,52 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/playlists"
+    <RelativeLayout
+        android:id="@+id/playlists_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/topAppBar"
         android:layout_above="@id/bottomNav"
-        android:clipToPadding="false"
-        android:overScrollMode="never"
-        android:paddingTop="10dp"
-        android:paddingBottom="100dp"
-        android:visibility="gone" />
+        android:layout_below="@id/topAppBar"
+        android:visibility="gone">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/alarms"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playlists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingTop="10dp"
+            android:paddingBottom="100dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/alarm_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/bottomNav"
-        android:layout_below="@id/topAppBar"
-        android:clipToPadding="false"
-        android:overScrollMode="never"
-        android:paddingTop="5dp"
-        android:paddingBottom="100dp" />
+        android:layout_below="@id/topAppBar">
+
+        <TextView
+            android:id="@+id/no_alarms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:alpha="0.8"
+            android:fontFamily="@font/poppins_400"
+            android:text="No Alarms"
+            tools:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/alarms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingTop="5dp"
+            android:paddingBottom="100dp"
+            tools:listitem="@layout/item_alarm" />
+
+    </RelativeLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addAlarm"
