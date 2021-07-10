@@ -63,7 +63,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="15dp"
             android:fontFamily="@font/poppins_600"
-            android:text="Suggested Song"
+            android:text="@string/suggested_song"
             android:textAlignment="center"
             android:textSize="22sp" />
 

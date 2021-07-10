@@ -31,4 +31,6 @@
     <string name="select_playlists">Playlists</string>
     <string name="continue_btn_text">Continue</string>
     <string name="dismiss">Dismiss</string>
+    <string name="suggested_song">Suggested Song</string>
+    <string name="swipe_to_dismiss">Swipe to dismiss</string>
 </resources>
