@@ -1,5 +1,7 @@
 package com.dscvit.cadence.ui.home
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +15,7 @@ import com.dscvit.cadence.repository.SpotifyRepository
 import com.dscvit.cadence.util.SpotifyConstants
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -21,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel
 @Inject constructor(
+    @ApplicationContext val context: Context,
     private val repository: SpotifyRepository,
     private val alarmRepository: AlarmRepository
 ) : ViewModel() {
@@ -39,22 +43,27 @@ class HomeViewModel
         get() = _tokenData
 
     private fun getTokenData() = viewModelScope.launch {
-        if (refreshToken.value != null) {
-            Timber.d("STARTING REF... ${refreshToken.value}")
-            repository.getRefreshTokenData(
-                "Basic ${SpotifyConstants.CLIENT_DETAILS_ENCODED}",
-                "refresh_token",
-                "${refreshToken.value}"
-            ).let { response ->
-                if (response.isSuccessful) {
-                    _tokenData.postValue(response.body())
-                    response.body()?.let { setToken(it.access_token) }
-                } else {
-                    Timber.d("FAILED TO FETCH REF ${response.raw()} ${refreshToken.value}")
+        try {
+            if (refreshToken.value != null) {
+                Timber.d("STARTING REF... ${refreshToken.value}")
+                repository.getRefreshTokenData(
+                    "Basic ${SpotifyConstants.CLIENT_DETAILS_ENCODED}",
+                    "refresh_token",
+                    "${refreshToken.value}"
+                ).let { response ->
+                    if (response.isSuccessful) {
+                        _tokenData.postValue(response.body())
+                        response.body()?.let { setToken(it.access_token) }
+                    } else {
+                        Timber.d("FAILED TO FETCH REF ${response.raw()} ${refreshToken.value}")
+                    }
                 }
+            } else {
+                Timber.d("NULL Failed REF")
             }
-        } else {
-            Timber.d("NULL Failed REF")
+        } catch (e: Exception) {
+            Timber.d(e)
+            Toast.makeText(context, "Couldn't connect to the internet", Toast.LENGTH_LONG).show()
         }
     }
 

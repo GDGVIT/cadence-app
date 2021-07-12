@@ -1,6 +1,9 @@
 package com.dscvit.cadence.ui.alarm
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.LinearGradient
 import android.graphics.Shader
@@ -20,12 +23,15 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
+import com.dscvit.cadence.alarm.AlarmReceiver
 import com.dscvit.cadence.databinding.FragmentAddAlarmBinding
 import com.dscvit.cadence.ui.home.HomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+
 
 @AndroidEntryPoint
 class AddAlarmFragment : Fragment() {
@@ -35,6 +41,7 @@ class AddAlarmFragment : Fragment() {
     private var _binding: FragmentAddAlarmBinding? = null
     private val binding get() = _binding!!
     private lateinit var prefs: SharedPreferences
+    private var recList = emptyList<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +68,7 @@ class AddAlarmFragment : Fragment() {
         val token = prefs.getString("token", "").toString()
         viewModel.setIs24Hr(is24HourFormat(requireContext()))
         viewModel.setAlarmInserted(0)
+        viewModel.setAlarmId(-1)
         binding.apply {
             val paint = digitalClock.paint
             val width = paint.measureText(viewModel.time.value)
@@ -108,7 +116,7 @@ class AddAlarmFragment : Fragment() {
             DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
 
         viewModel.trackData.observe(viewLifecycleOwner, { trackData ->
-            if (viewModel.alarmInserted.value == 2) {
+            if (viewModel.alarmInserted.value == 3) {
                 songName.text = trackData.tracks[0].name
                 songArtist.text = trackData.tracks[0].artists[0].name
                 Glide.with(songArt.context)
@@ -122,24 +130,25 @@ class AddAlarmFragment : Fragment() {
         })
 
         continueBtn.setOnClickListener {
-            viewModel.setAlarmInserted(3)
+            viewModel.setAlarmInserted(4)
             dialog.dismiss()
         }
 
         binding.nextBtn.setOnClickListener {
             if (binding.alarmEditField.text.toString().trim() != "") {
-                viewModel.setAlarmInserted(4)
+                viewModel.setAlarmInserted(2)
+                recList = listOf(
+                    binding.toggleMon.isChecked,
+                    binding.toggleTue.isChecked,
+                    binding.toggleWed.isChecked,
+                    binding.toggleThu.isChecked,
+                    binding.toggleFri.isChecked,
+                    binding.toggleSat.isChecked,
+                    binding.toggleSun.isChecked,
+                )
                 viewModel.getSongData(
                     binding.alarmEditField.text.toString(),
-                    listOf(
-                        binding.toggleMon.isChecked,
-                        binding.toggleTue.isChecked,
-                        binding.toggleWed.isChecked,
-                        binding.toggleThu.isChecked,
-                        binding.toggleFri.isChecked,
-                        binding.toggleSat.isChecked,
-                        binding.toggleSun.isChecked,
-                    ),
+                    recList,
                     token
                 )
                 dialog.show()
@@ -148,25 +157,102 @@ class AddAlarmFragment : Fragment() {
             }
         }
 
+//        viewModel.alarmId.observe(viewLifecycleOwner, { id ->
+//            if (id >= 0) {
+//                val alarmManager =
+//                    requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//                val i = Intent(context, AlarmReceiver::class.java)
+//                i.putExtra("ALARM_ID", id)
+//                val pi = PendingIntent.getBroadcast(context, id.toInt(), i, 0)
+//
+//                val now = Calendar.getInstance()
+//                val schedule = now.clone() as Calendar
+//                schedule[Calendar.HOUR_OF_DAY] = viewModel.hour.value!!
+//                schedule[Calendar.MINUTE] = viewModel.min.value!!
+//                schedule[Calendar.SECOND] = 0
+//                schedule[Calendar.MILLISECOND] = 0
+//
+//                if (schedule <= now) schedule.add(Calendar.DATE, 1)
+//
+//                if (!recList.contains(true)) {
+////                    val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
+////                    alarmManager.setAlarmClock(info, pi)
+//                    alarmManager.setExactAndAllowWhileIdle(
+//                        AlarmManager.RTC_WAKEUP,
+//                        schedule.timeInMillis,
+//                        pi
+//                    )
+//                    Toast.makeText(
+//                        context,
+//                        "Alarm scheduled for ${viewModel.time.value}",
+//                        Toast.LENGTH_LONG
+//                    ).show()
+//                }
+//            }
+//        })
+
         viewModel.alarmInserted.observe(viewLifecycleOwner, { isInserted ->
             when (isInserted) {
-                3 -> {
+                4 -> {
+                    val id = viewModel.alarmId.value!!
+                    if (id >= 0) {
+                        val alarmManager =
+                            requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        val i = Intent(context, AlarmReceiver::class.java)
+                        i.putExtra("ALARM_ID", id)
+                        i.putExtra("SONG_ID", viewModel.songId.value?.song)
+                        i.putExtra("SONG_NAME", viewModel.trackData.value?.tracks?.get(0)?.name)
+                        i.putExtra(
+                            "SONG_ARTIST",
+                            viewModel.trackData.value?.tracks?.get(0)?.artists?.get(0)?.name
+                        )
+                        i.putExtra(
+                            "SONG_ART",
+                            viewModel.trackData.value?.tracks?.get(0)?.album?.images?.get(0)?.url
+                        )
+                        i.putExtra("SONG_URL", viewModel.trackData.value?.tracks?.get(0)?.href)
+                        val pi = PendingIntent.getBroadcast(context, id.toInt(), i, 0)
+
+                        val now = Calendar.getInstance()
+                        val schedule = now.clone() as Calendar
+                        schedule[Calendar.HOUR_OF_DAY] = viewModel.hour.value!!
+                        schedule[Calendar.MINUTE] = viewModel.min.value!!
+                        schedule[Calendar.SECOND] = 0
+                        schedule[Calendar.MILLISECOND] = 0
+
+                        if (schedule <= now) schedule.add(Calendar.DATE, 1)
+
+                        if (!recList.contains(true)) {
+//                            val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
+//                            alarmManager.setAlarmClock(info, pi)
+                            alarmManager.setExactAndAllowWhileIdle(
+                                AlarmManager.RTC_WAKEUP,
+                                schedule.timeInMillis,
+                                pi
+                            )
+                            Toast.makeText(
+                                context,
+                                "Alarm scheduled for ${viewModel.time.value}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                    viewModel.setAlarmId(-1)
                     viewModel.setAlarmInserted(0)
                     requireView().findNavController().navigate(R.id.add_alarm_to_home)
                 }
-                2 -> {
+                3 -> {
                     progressBar.setProgress(100, true)
                     loadingLayout.visibility = View.GONE
                 }
-                1 -> {
+                2 -> {
                     progressBar.setProgress(90, true)
+                }
+                1 -> {
+                    progressBar.setProgress(70, true)
                 }
                 0 -> {
                     progressBar.setProgress(0, true)
-
-                }
-                4 -> {
-                    progressBar.setProgress(70, true)
                 }
                 -1 -> {
                     continueBtn.isEnabled = true
@@ -182,6 +268,14 @@ class AddAlarmFragment : Fragment() {
                     loadingLayout.visibility = View.VISIBLE
                     error.text = "Fetch Failed!"
                     errorDesc.text = "Spotify didn't send the song data"
+                }
+                -3 -> {
+                    continueBtn.isEnabled = true
+                    progressBar.visibility = View.GONE
+                    errorImageView.visibility = View.VISIBLE
+                    loadingLayout.visibility = View.VISIBLE
+                    error.text = "Fetch Failed!"
+                    errorDesc.text = "Couldn't connect to the internet"
                 }
             }
         })

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dscvit.cadence.R
+import com.dscvit.cadence.alarm.NotificationHelper
 import com.dscvit.cadence.ui.home.HomeViewModel
 import com.dscvit.cadence.ui.login.LoginViewModel
 import com.dscvit.cadence.util.SpotifyConstants
@@ -31,6 +32,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         prefs = getSharedPreferences("user_data", MODE_PRIVATE)
+        if (!prefs.getBoolean("notif_channel", false)) {
+            NotificationHelper.createNotificationChannel(
+                this,
+                "Alarms",
+                "Channel to manage all alarms"
+            )
+            prefs.edit().putBoolean("notif_channel", true).apply()
+        }
         viewModel.isLoggedIn(prefs.getBoolean("logged_in", false))
         viewModel.isConsented(prefs.getBoolean("consent", false))
         viewModel.isSuccessful(false)
