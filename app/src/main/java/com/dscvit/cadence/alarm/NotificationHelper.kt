@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.dscvit.cadence.R
 

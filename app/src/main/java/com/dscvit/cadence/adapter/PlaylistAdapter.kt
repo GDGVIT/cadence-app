@@ -48,7 +48,7 @@ class PlaylistAdapter(
                 .placeholder(R.drawable.profile_pic_placeholder)
                 .into(imageView)
             itemView.setOnClickListener {
-                spotifyAppRemote.playerApi.play("spotify:playlist:${currPlaylist.id}");
+                spotifyAppRemote.playerApi.play("spotify:playlist:${currPlaylist.id}")
             }
         }
     }

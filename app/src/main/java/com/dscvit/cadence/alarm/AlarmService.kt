@@ -5,12 +5,17 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.IBinder
 import android.os.Vibrator
 import android.widget.Toast
 import com.dscvit.cadence.model.alarm.Alarm
 import com.dscvit.cadence.repository.AlarmRepository
 import com.dscvit.cadence.ui.MainActivity
+import com.dscvit.cadence.util.SpotifyConstants
+import com.spotify.android.appremote.api.ConnectionParams
+import com.spotify.android.appremote.api.Connector
+import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -56,6 +61,7 @@ class AlarmService : Service() {
                 }
             }
         }
+        playSong(songId, songUrl)
 //        mediaPlayer!!.start()
 //        val pattern = longArrayOf(0, 100, 1000)
 //        vibrator!!.vibrate(pattern, 0)
@@ -72,6 +78,29 @@ class AlarmService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+
+    private fun playSong(songId: String?, songUrl: String?) {
+        val connectionParams = ConnectionParams.Builder(SpotifyConstants.CLIENT_ID)
+            .setRedirectUri(SpotifyConstants.REDIRECT_URI)
+            .showAuthView(true)
+            .build()
+
+        SpotifyAppRemote.connect(
+            this,
+            connectionParams,
+            object : Connector.ConnectionListener {
+                override fun onConnected(appRemote: SpotifyAppRemote) {
+                    appRemote.playerApi.play(songId)
+                }
+
+                override fun onFailure(throwable: Throwable) {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(songUrl)
+                    startActivity(i)
+                    // Something went wrong when attempting to connect! Handle errors here
+                }
+            })
     }
 
     private fun sendNotif(

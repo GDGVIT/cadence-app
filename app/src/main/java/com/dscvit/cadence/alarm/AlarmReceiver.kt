@@ -5,11 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.widget.Toast
-import com.dscvit.cadence.model.alarm.Alarm
-import com.dscvit.cadence.repository.AlarmRepository
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -27,8 +22,8 @@ class AlarmReceiver : BroadcastReceiver() {
             intentService.putExtra("ALARM_ID", id)
             intentService.putExtra("SONG_ID", songId)
             intentService.putExtra("SONG_NAME", songName)
-            intentService.putExtra("SONG_ARTIST",songArtist)
-            intentService.putExtra("SONG_ART",songArt)
+            intentService.putExtra("SONG_ARTIST", songArtist)
+            intentService.putExtra("SONG_ART", songArt)
             intentService.putExtra("SONG_URL", songUrl)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intentService)
