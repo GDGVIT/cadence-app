@@ -76,18 +76,28 @@ class AddAlarmViewModel
     val songId: LiveData<Song> get() = _songId
 
     fun getSongData(name: String, days: List<Boolean>, token: String) = viewModelScope.launch {
-        val postParam = JsonObject()
-        postParam.addProperty("prompt", name)
-        postParam.addProperty("playlist", playlistId.value)
-        repositoryApi.getSongData(postParam).let { response ->
-            if (response.isSuccessful) {
-                _songId.postValue(response.body())
-                response.body()?.let { insertAlarm(name, days, it, token) }
-            } else {
-                setAlarmInserted(-1)
-                Timber.d("Failed to fetch song")
+        try {
+            val postParam = JsonObject()
+            postParam.addProperty("prompt", name)
+            postParam.addProperty("playlist", playlistId.value)
+            repositoryApi.getSongData(postParam).let { response ->
+                if (response.isSuccessful) {
+                    _songId.postValue(response.body())
+                    response.body()?.let { insertAlarm(name, days, it, token) }
+                } else {
+                    setAlarmInserted(-1)
+                    Timber.d("Failed to fetch song")
+                }
             }
+        } catch (e: Exception) {
+            setAlarmInserted(-3)
         }
+    }
+
+    private val _alarmId = MutableLiveData<Long>()
+    val alarmId: LiveData<Long> get() = _alarmId
+    fun setAlarmId(r: Long) {
+        _alarmId.postValue(r)
     }
 
     private val _alarmInserted = MutableLiveData<Int>()
@@ -118,7 +128,8 @@ class AddAlarmViewModel
             var id: Long = 0
             viewModelScope.launch(Dispatchers.IO) {
                 id = repository.insertAlarm(alarm)
-                setAlarmInserted(1)
+                setAlarmId(id)
+                setAlarmInserted(2)
                 getTracksData(token, sid.song)
             }
             return id
@@ -132,14 +143,19 @@ class AddAlarmViewModel
     val trackData: LiveData<TracksData> get() = _trackData
 
     private fun getTracksData(token: String, id: String) = viewModelScope.launch {
-        repositoryApi.getTracksData("Bearer $token", id.substring(14, id.length)).let { response ->
-            if (response.isSuccessful) {
-                setAlarmInserted(2)
-                _trackData.postValue(response.body())
-            } else {
-                setAlarmInserted(-2)
-                Timber.d("Failed to fetch song data $token ${response.raw()}")
-            }
+        try {
+            repositoryApi.getTracksData("Bearer $token", id.substring(14, id.length))
+                .let { response ->
+                    if (response.isSuccessful) {
+                        setAlarmInserted(3)
+                        _trackData.postValue(response.body())
+                    } else {
+                        setAlarmInserted(-2)
+                        Timber.d("Failed to fetch song data $token ${response.raw()}")
+                    }
+                }
+        } catch (e: Exception) {
+            setAlarmInserted(-2)
         }
     }
 
