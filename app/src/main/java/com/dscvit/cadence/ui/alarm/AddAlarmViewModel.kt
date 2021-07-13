@@ -15,7 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,7 +53,7 @@ class AddAlarmViewModel
     fun setTime(hr: Int, min: Int, is24hr: Boolean) {
         setHour(hr)
         setMinute(min)
-        val t = "${hr}:${min}"
+        val t = "$hr:$min"
         val formatTime =
             SimpleDateFormat(if (is24hr) "HH:mm" else "h:mm a", Locale.getDefault())
         val simpleDateFormat = SimpleDateFormat("hh:mm", Locale.getDefault())

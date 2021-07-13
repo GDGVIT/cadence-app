@@ -25,7 +25,8 @@ class LoginFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
@@ -33,20 +34,21 @@ class LoginFragment : Fragment() {
             viewModel.isSyncing(true)
             viewModel.isLoggedIn(true)
         }
-        viewModel.isSuccessful.observe(viewLifecycleOwner, { successful ->
-            if (successful) {
-                if (viewModel.isConsented.value == true) {
-                    requireView().findNavController()
-                        .navigate(R.id.login_to_home)
-                } else {
-                    requireView().findNavController()
-                        .navigate(R.id.login_to_consent)
+        viewModel.isSuccessful.observe(
+            viewLifecycleOwner,
+            { successful ->
+                if (successful) {
+                    if (viewModel.isConsented.value == true) {
+                        requireView().findNavController()
+                            .navigate(R.id.login_to_home)
+                    } else {
+                        requireView().findNavController()
+                            .navigate(R.id.login_to_consent)
+                    }
                 }
             }
-        })
+        )
 
         return binding.root
     }
-
-
 }

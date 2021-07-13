@@ -163,5 +163,4 @@ class HomeViewModel
     init {
         setPage(0)
     }
-
 }

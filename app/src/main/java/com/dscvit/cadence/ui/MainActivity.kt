@@ -46,38 +46,47 @@ class MainActivity : AppCompatActivity() {
         viewModel2.isSuccessful(false)
         viewModel.isSyncing(false)
         viewModel2.isSyncing(false)
-        viewModel.isLoggedIn.observe(this, { loggedIn ->
-            if (loggedIn) {
-                if (viewModel.isSyncing.value == true) {
+        viewModel.isLoggedIn.observe(
+            this,
+            { loggedIn ->
+                if (loggedIn) {
+                    if (viewModel.isSyncing.value == true) {
+                        spotifySignIn()
+                    } else {
+                        viewModel.isSuccessful(true)
+                    }
+                }
+            }
+        )
+
+        viewModel2.isSyncing.observe(
+            this,
+            { sync ->
+                if (sync) {
                     spotifySignIn()
-                } else {
+                }
+            }
+        )
+
+        viewModel.tokenData.observe(
+            this,
+            { tokenData ->
+                if (tokenData.refresh_token != "" && tokenData.access_token != "" && tokenData != null) {
+                    prefs.edit().apply {
+                        putString("token", tokenData.access_token)
+                        putBoolean("logged_in", true)
+                        putString("refresh_token", tokenData.refresh_token)
+                        apply()
+                    }
                     viewModel.isSuccessful(true)
+                    viewModel2.isSuccessful(true)
+                    viewModel.isSyncing(false)
+                    viewModel2.isSyncing(false)
+                } else {
+                    Toast.makeText(this, "Unable to fetch token :(", Toast.LENGTH_LONG).show()
                 }
             }
-        })
-
-        viewModel2.isSyncing.observe(this, { sync ->
-            if (sync) {
-                spotifySignIn()
-            }
-        })
-
-        viewModel.tokenData.observe(this, { tokenData ->
-            if (tokenData.refresh_token != "" && tokenData.access_token != "" && tokenData != null) {
-                prefs.edit().apply {
-                    putString("token", tokenData.access_token)
-                    putBoolean("logged_in", true)
-                    putString("refresh_token", tokenData.refresh_token)
-                    apply()
-                }
-                viewModel.isSuccessful(true)
-                viewModel2.isSuccessful(true)
-                viewModel.isSyncing(false)
-                viewModel2.isSyncing(false)
-            } else {
-                Toast.makeText(this, "Unable to fetch token :(", Toast.LENGTH_LONG).show()
-            }
-        })
+        )
     }
 
     private fun spotifySignIn() {

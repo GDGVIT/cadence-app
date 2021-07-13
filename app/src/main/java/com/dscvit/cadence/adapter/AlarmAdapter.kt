@@ -11,7 +11,8 @@ import com.dscvit.cadence.model.alarm.Alarm
 import com.dscvit.cadence.util.OnEditAlarmListener
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class AlarmAdapter(
     private var alarms: List<Alarm>,
@@ -77,5 +78,4 @@ class AlarmAdapter(
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = alarms.size
-
 }

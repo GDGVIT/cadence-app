@@ -33,7 +33,6 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
-
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
@@ -50,7 +49,8 @@ class HomeFragment : Fragment() {
     var firstTimeAlarm = true
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -64,28 +64,31 @@ class HomeFragment : Fragment() {
             true
         }
 
-        viewModel.page.observe(viewLifecycleOwner, { p ->
-            when (p) {
-                R.id.playlists -> {
-                    binding.apply {
-                        titleBar.text = context?.getString(R.string.playlists) ?: "Playlists"
-                        alarmLayout.visibility = View.GONE
-                        playlistsLayout.visibility = View.VISIBLE
-                        addAlarm.hide()
-                        syncPlaylist.show()
+        viewModel.page.observe(
+            viewLifecycleOwner,
+            { p ->
+                when (p) {
+                    R.id.playlists -> {
+                        binding.apply {
+                            titleBar.text = context?.getString(R.string.playlists) ?: "Playlists"
+                            alarmLayout.visibility = View.GONE
+                            playlistsLayout.visibility = View.VISIBLE
+                            addAlarm.hide()
+                            syncPlaylist.show()
+                        }
                     }
-                }
-                else -> {
-                    binding.apply {
-                        titleBar.text = context?.getString(R.string.alarms) ?: "Alarms"
-                        playlistsLayout.visibility = View.GONE
-                        alarmLayout.visibility = View.VISIBLE
-                        addAlarm.show()
-                        syncPlaylist.hide()
+                    else -> {
+                        binding.apply {
+                            titleBar.text = context?.getString(R.string.alarms) ?: "Alarms"
+                            playlistsLayout.visibility = View.GONE
+                            alarmLayout.visibility = View.VISIBLE
+                            addAlarm.show()
+                            syncPlaylist.hide()
+                        }
                     }
                 }
             }
-        })
+        )
 
         prefs = requireContext().getSharedPreferences("user_data", MODE_PRIVATE)
         refToken = prefs.getString("refresh_token", "").toString()
@@ -113,50 +116,60 @@ class HomeFragment : Fragment() {
 
         viewModel.getAllAlarms()
 
-        viewModel.alarmsList.observe(viewLifecycleOwner, { t ->
-            if (t != null) {
-                if (t.isNotEmpty()) {
-                    binding.noAlarms.visibility = View.GONE
-                    if (firstTimeAlarm) {
-                        alarmAdapter = AlarmAdapter(t, object : OnEditAlarmListener {
-                            override fun onToggle(alarm: Alarm) {
-                                viewModel.updateAlarm(alarm)
-                            }
+        viewModel.alarmsList.observe(
+            viewLifecycleOwner,
+            { t ->
+                if (t != null) {
+                    if (t.isNotEmpty()) {
+                        binding.noAlarms.visibility = View.GONE
+                        if (firstTimeAlarm) {
+                            alarmAdapter = AlarmAdapter(
+                                t,
+                                object : OnEditAlarmListener {
+                                    override fun onToggle(alarm: Alarm) {
+                                        viewModel.updateAlarm(alarm)
+                                    }
 
-                            override fun onDelete(alarm: Alarm) {
-                                viewModel.deleteAlarm(alarm.id!!)
+                                    override fun onDelete(alarm: Alarm) {
+                                        viewModel.deleteAlarm(alarm.id!!)
+                                    }
+                                }
+                            )
+                            binding.alarms.apply {
+                                layoutManager = LinearLayoutManager(context)
+                                setHasFixedSize(true)
+                                adapter = alarmAdapter
                             }
-                        })
-                        binding.alarms.apply {
-                            layoutManager = LinearLayoutManager(context)
-                            setHasFixedSize(true)
-                            adapter = alarmAdapter
+                            firstTimeAlarm = false
+                        } else {
+                            alarmAdapter.dataSetChange(t)
+                            alarmAdapter.notifyDataSetChanged()
                         }
-                        firstTimeAlarm = false
                     } else {
-                        alarmAdapter.dataSetChange(t)
-                        alarmAdapter.notifyDataSetChanged()
-                    }
-                } else {
-                    binding.noAlarms.visibility = View.VISIBLE
-                    if (!firstTimeAlarm) {
-                        alarmAdapter.dataSetChange(t)
-                        alarmAdapter.notifyDataSetChanged()
+                        binding.noAlarms.visibility = View.VISIBLE
+                        if (!firstTimeAlarm) {
+                            alarmAdapter.dataSetChange(t)
+                            alarmAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
             }
-        })
+        )
 
-        viewModel.token.observe(viewLifecycleOwner, { t ->
-            if (t != "" && t != null) {
-                token = t
-                prefs.edit().putString("token", token).apply()
+        viewModel.token.observe(
+            viewLifecycleOwner,
+            { t ->
+                if (t != "" && t != null) {
+                    token = t
+                    prefs.edit().putString("token", token).apply()
+                }
             }
-        })
+        )
 
         try {
             viewModel.isSuccessful.observe(
-                viewLifecycleOwner, { successful ->
+                viewLifecycleOwner,
+                { successful ->
                     if (successful) {
                         refToken = prefs.getString("refresh_token", "").toString()
                         if (viewModel.spotifyAppRemote.value != null) {
@@ -187,7 +200,8 @@ class HomeFragment : Fragment() {
                             .placeholder(R.drawable.profile_pic_placeholder)
                             .into(binding.profilePic)
                     }
-                })
+                }
+            )
 
             val connectionParams = ConnectionParams.Builder(CLIENT_ID)
                 .setRedirectUri(REDIRECT_URI)
@@ -210,7 +224,8 @@ class HomeFragment : Fragment() {
                         Timber.e(throwable)
                         // Something went wrong when attempting to connect! Handle errors here
                     }
-                })
+                }
+            )
 
             viewModel.spotifyRespPlay.observe(
                 viewLifecycleOwner,
@@ -229,7 +244,8 @@ class HomeFragment : Fragment() {
                         playlistAdapter.dataSetChange(result.items)
                         playlistAdapter.notifyDataSetChanged()
                     }
-                })
+                }
+            )
         } catch (e: Exception) {
             Toast.makeText(context, "Something went wrong :(", Toast.LENGTH_SHORT).show()
         }

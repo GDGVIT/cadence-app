@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
-import android.os.Vibrator
 import android.widget.Toast
 import com.dscvit.cadence.model.alarm.Alarm
 import com.dscvit.cadence.repository.AlarmRepository
@@ -26,13 +25,15 @@ class AlarmService : Service() {
     @Inject
     lateinit var repository: AlarmRepository
 
+    lateinit var spotifyAppRemote: SpotifyAppRemote
+
     //    private var mediaPlayer: MediaPlayer? = null
-    private var vibrator: Vibrator? = null
+//    private var vibrator: Vibrator? = null
     override fun onCreate() {
         super.onCreate()
 //        mediaPlayer = MediaPlayer.create(this, R.raw.alarm)
 //        mediaPlayer!!.isLooping = true
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
+//        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -73,7 +74,10 @@ class AlarmService : Service() {
     override fun onDestroy() {
         super.onDestroy()
 //        mediaPlayer!!.stop()
-        vibrator!!.cancel()
+//        vibrator!!.cancel()
+        spotifyAppRemote.let {
+            SpotifyAppRemote.disconnect(it)
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -91,6 +95,7 @@ class AlarmService : Service() {
             connectionParams,
             object : Connector.ConnectionListener {
                 override fun onConnected(appRemote: SpotifyAppRemote) {
+                    spotifyAppRemote = appRemote
                     appRemote.playerApi.play(songId)
                 }
 
@@ -100,7 +105,8 @@ class AlarmService : Service() {
                     startActivity(i)
                     // Something went wrong when attempting to connect! Handle errors here
                 }
-            })
+            }
+        )
     }
 
     private fun sendNotif(

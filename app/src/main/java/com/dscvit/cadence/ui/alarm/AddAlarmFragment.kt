@@ -12,7 +12,12 @@ import android.text.format.DateFormat.is24HourFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
@@ -30,8 +35,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
-
+import java.util.Calendar
 
 @AndroidEntryPoint
 class AddAlarmFragment : Fragment() {
@@ -45,17 +49,21 @@ class AddAlarmFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (viewModel.alarmInserted.value == 0)
-                    requireView().findNavController()
-                        .navigate(R.id.add_alarm_to_home)
+        activity?.onBackPressedDispatcher?.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (viewModel.alarmInserted.value == 0)
+                        requireView().findNavController()
+                            .navigate(R.id.add_alarm_to_home)
+                }
             }
-        })
+        )
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAddAlarmBinding.inflate(inflater, container, false)
@@ -73,10 +81,12 @@ class AddAlarmFragment : Fragment() {
             val paint = digitalClock.paint
             val width = paint.measureText(viewModel.time.value)
             val textShader: Shader = LinearGradient(
-                0f, 0f, width, digitalClock.textSize, intArrayOf(
+                0f, 0f, width, digitalClock.textSize,
+                intArrayOf(
                     requireContext().getColor(R.color.orange_light),
                     requireContext().getColor(R.color.pink_light),
-                ), null, Shader.TileMode.CLAMP
+                ),
+                null, Shader.TileMode.CLAMP
             )
             digitalClock.paint.shader = textShader
         }
@@ -115,19 +125,22 @@ class AddAlarmFragment : Fragment() {
         val factory =
             DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
 
-        viewModel.trackData.observe(viewLifecycleOwner, { trackData ->
-            if (viewModel.alarmInserted.value == 3) {
-                songName.text = trackData.tracks[0].name
-                songArtist.text = trackData.tracks[0].artists[0].name
-                Glide.with(songArt.context)
-                    .load(trackData.tracks[0].album.images[0].url)
-                    .transition(DrawableTransitionOptions.withCrossFade(factory))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .centerCrop()
-                    .into(songArt)
-                continueBtn.isEnabled = true
+        viewModel.trackData.observe(
+            viewLifecycleOwner,
+            { trackData ->
+                if (viewModel.alarmInserted.value == 3) {
+                    songName.text = trackData.tracks[0].name
+                    songArtist.text = trackData.tracks[0].artists[0].name
+                    Glide.with(songArt.context)
+                        .load(trackData.tracks[0].album.images[0].url)
+                        .transition(DrawableTransitionOptions.withCrossFade(factory))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .into(songArt)
+                    continueBtn.isEnabled = true
+                }
             }
-        })
+        )
 
         continueBtn.setOnClickListener {
             viewModel.setAlarmInserted(4)
@@ -175,8 +188,8 @@ class AddAlarmFragment : Fragment() {
 //                if (schedule <= now) schedule.add(Calendar.DATE, 1)
 //
 //                if (!recList.contains(true)) {
-////                    val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
-////                    alarmManager.setAlarmClock(info, pi)
+// //                    val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
+// //                    alarmManager.setAlarmClock(info, pi)
 //                    alarmManager.setExactAndAllowWhileIdle(
 //                        AlarmManager.RTC_WAKEUP,
 //                        schedule.timeInMillis,
@@ -191,100 +204,106 @@ class AddAlarmFragment : Fragment() {
 //            }
 //        })
 
-        viewModel.alarmInserted.observe(viewLifecycleOwner, { isInserted ->
-            when (isInserted) {
-                4 -> {
-                    val id = viewModel.alarmId.value!!
-                    if (id >= 0) {
-                        val alarmManager =
-                            requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                        val i = Intent(context, AlarmReceiver::class.java)
-                        i.putExtra("ALARM_ID", id)
-                        i.putExtra("SONG_ID", viewModel.songId.value?.song)
-                        i.putExtra("SONG_NAME", viewModel.trackData.value?.tracks?.get(0)?.name)
-                        i.putExtra(
-                            "SONG_ARTIST",
-                            viewModel.trackData.value?.tracks?.get(0)?.artists?.get(0)?.name
-                        )
-                        i.putExtra(
-                            "SONG_ART",
-                            viewModel.trackData.value?.tracks?.get(0)?.album?.images?.get(0)?.url
-                        )
-                        i.putExtra("SONG_URL", viewModel.trackData.value?.tracks?.get(0)?.href)
-                        val pi = PendingIntent.getBroadcast(context, id.toInt(), i, 0)
+        viewModel.alarmInserted.observe(
+            viewLifecycleOwner,
+            { isInserted ->
+                when (isInserted) {
+                    4 -> {
+                        val id = viewModel.alarmId.value!!
+                        if (id >= 0) {
+                            val alarmManager =
+                                requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                            val i = Intent(context, AlarmReceiver::class.java)
+                            i.putExtra("ALARM_ID", id)
+                            i.putExtra("SONG_ID", viewModel.songId.value?.song)
+                            i.putExtra("SONG_NAME", viewModel.trackData.value?.tracks?.get(0)?.name)
+                            i.putExtra(
+                                "SONG_ARTIST",
+                                viewModel.trackData.value?.tracks?.get(0)?.artists?.get(0)?.name
+                            )
+                            i.putExtra(
+                                "SONG_ART",
+                                viewModel.trackData.value?.tracks?.get(0)?.album?.images?.get(0)?.url
+                            )
+                            i.putExtra("SONG_URL", viewModel.trackData.value?.tracks?.get(0)?.href)
+                            val pi = PendingIntent.getBroadcast(context, id.toInt(), i, 0)
 
-                        val now = Calendar.getInstance()
-                        val schedule = now.clone() as Calendar
-                        schedule[Calendar.HOUR_OF_DAY] = viewModel.hour.value!!
-                        schedule[Calendar.MINUTE] = viewModel.min.value!!
-                        schedule[Calendar.SECOND] = 0
-                        schedule[Calendar.MILLISECOND] = 0
+                            val now = Calendar.getInstance()
+                            val schedule = now.clone() as Calendar
+                            schedule[Calendar.HOUR_OF_DAY] = viewModel.hour.value!!
+                            schedule[Calendar.MINUTE] = viewModel.min.value!!
+                            schedule[Calendar.SECOND] = 0
+                            schedule[Calendar.MILLISECOND] = 0
 
-                        if (schedule <= now) schedule.add(Calendar.DATE, 1)
+                            if (schedule <= now) schedule.add(Calendar.DATE, 1)
 
-                        if (!recList.contains(true)) {
+                            if (!recList.contains(true)) {
 //                            val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
 //                            alarmManager.setAlarmClock(info, pi)
-                            alarmManager.setExactAndAllowWhileIdle(
-                                AlarmManager.RTC_WAKEUP,
-                                schedule.timeInMillis,
-                                pi
-                            )
-                            Toast.makeText(
-                                context,
-                                "Alarm scheduled for ${viewModel.time.value}",
-                                Toast.LENGTH_LONG
-                            ).show()
+                                alarmManager.setExactAndAllowWhileIdle(
+                                    AlarmManager.RTC_WAKEUP,
+                                    schedule.timeInMillis,
+                                    pi
+                                )
+                                Toast.makeText(
+                                    context,
+                                    "Alarm scheduled for ${viewModel.time.value}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
+                        viewModel.setAlarmId(-1)
+                        viewModel.setAlarmInserted(0)
+                        requireView().findNavController().navigate(R.id.add_alarm_to_home)
                     }
-                    viewModel.setAlarmId(-1)
-                    viewModel.setAlarmInserted(0)
-                    requireView().findNavController().navigate(R.id.add_alarm_to_home)
-                }
-                3 -> {
-                    progressBar.setProgress(100, true)
-                    loadingLayout.visibility = View.GONE
-                }
-                2 -> {
-                    progressBar.setProgress(90, true)
-                }
-                1 -> {
-                    progressBar.setProgress(70, true)
-                }
-                0 -> {
-                    progressBar.setProgress(0, true)
-                }
-                -1 -> {
-                    continueBtn.isEnabled = true
-                    progressBar.visibility = View.GONE
-                    errorImageView.visibility = View.VISIBLE
-                    error.text = "Incompatible Playlist"
-                    errorDesc.text = "Please use some other playlist"
-                }
-                -2 -> {
-                    continueBtn.isEnabled = true
-                    progressBar.visibility = View.GONE
-                    errorImageView.visibility = View.VISIBLE
-                    loadingLayout.visibility = View.VISIBLE
-                    error.text = "Fetch Failed!"
-                    errorDesc.text = "Spotify didn't send the song data"
-                }
-                -3 -> {
-                    continueBtn.isEnabled = true
-                    progressBar.visibility = View.GONE
-                    errorImageView.visibility = View.VISIBLE
-                    loadingLayout.visibility = View.VISIBLE
-                    error.text = "Fetch Failed!"
-                    errorDesc.text = "Couldn't connect to the internet"
+                    3 -> {
+                        progressBar.setProgress(100, true)
+                        loadingLayout.visibility = View.GONE
+                    }
+                    2 -> {
+                        progressBar.setProgress(90, true)
+                    }
+                    1 -> {
+                        progressBar.setProgress(70, true)
+                    }
+                    0 -> {
+                        progressBar.setProgress(0, true)
+                    }
+                    -1 -> {
+                        continueBtn.isEnabled = true
+                        progressBar.visibility = View.GONE
+                        errorImageView.visibility = View.VISIBLE
+                        error.text = "Incompatible Playlist"
+                        errorDesc.text = "Please use some other playlist"
+                    }
+                    -2 -> {
+                        continueBtn.isEnabled = true
+                        progressBar.visibility = View.GONE
+                        errorImageView.visibility = View.VISIBLE
+                        loadingLayout.visibility = View.VISIBLE
+                        error.text = "Fetch Failed!"
+                        errorDesc.text = "Spotify didn't send the song data"
+                    }
+                    -3 -> {
+                        continueBtn.isEnabled = true
+                        progressBar.visibility = View.GONE
+                        errorImageView.visibility = View.VISIBLE
+                        loadingLayout.visibility = View.VISIBLE
+                        error.text = "Fetch Failed!"
+                        errorDesc.text = "Couldn't connect to the internet"
+                    }
                 }
             }
-        })
+        )
 
         binding.digitalClock.apply {
 
-            viewModel.time.observe(viewLifecycleOwner, { t ->
-                text = t
-            })
+            viewModel.time.observe(
+                viewLifecycleOwner,
+                { t ->
+                    text = t
+                }
+            )
 
             setOnClickListener {
                 val picker =
@@ -305,18 +324,24 @@ class AddAlarmFragment : Fragment() {
                 .navigate(R.id.add_alarm_to_playlist)
         }
 
-        viewModel.selectedPlaylist.observe(viewLifecycleOwner, { pn ->
-            val playLen = viewModelPlaylists.spotifyRespPlay.value?.items?.size
-            setPlaylistLayout(playLen, pn)
-        })
-
-        viewModelPlaylists.spotifyRespPlay.observe(viewLifecycleOwner, { playlist ->
-            val playLen = playlist.items.size
-            val pn = viewModel.selectedPlaylist.value
-            if (pn != null) {
+        viewModel.selectedPlaylist.observe(
+            viewLifecycleOwner,
+            { pn ->
+                val playLen = viewModelPlaylists.spotifyRespPlay.value?.items?.size
                 setPlaylistLayout(playLen, pn)
             }
-        })
+        )
+
+        viewModelPlaylists.spotifyRespPlay.observe(
+            viewLifecycleOwner,
+            { playlist ->
+                val playLen = playlist.items.size
+                val pn = viewModel.selectedPlaylist.value
+                if (pn != null) {
+                    setPlaylistLayout(playLen, pn)
+                }
+            }
+        )
     }
 
     private fun setPlaylistLayout(playLen: Int?, pn: Int) {

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.widget.Toast
 
-
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -30,7 +29,6 @@ class AlarmReceiver : BroadcastReceiver() {
             } else {
                 context.startService(intentService)
             }
-
         }
     }
 }

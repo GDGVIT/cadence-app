@@ -64,7 +64,6 @@ class LoginViewModel @Inject constructor(
     val tokenData: LiveData<TokenData>
         get() = _tokenData
 
-
     private fun getTokenData() = viewModelScope.launch {
         if (code.value != null) {
             Timber.d("STARTING CODE... ${code.value}")
@@ -85,5 +84,4 @@ class LoginViewModel @Inject constructor(
             Timber.d("NULL Failed CODE")
         }
     }
-
 }

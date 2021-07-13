@@ -25,7 +25,8 @@ class PlaylistsFragment : Fragment() {
     private lateinit var playlistAdapter: PlaylistSelectorAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
@@ -42,13 +43,16 @@ class PlaylistsFragment : Fragment() {
             { result ->
                 if (firstTime) {
                     playlistAdapter =
-                        PlaylistSelectorAdapter(result.items, object : OnSelectPlaylistListener {
-                            override fun onSelect(playlist: Item, position: Int) {
-                                viewModel.setSelectedPlaylist(position)
-                                viewModel.setPlaylistId(playlist.id)
-                                requireActivity().onBackPressed()
+                        PlaylistSelectorAdapter(
+                            result.items,
+                            object : OnSelectPlaylistListener {
+                                override fun onSelect(playlist: Item, position: Int) {
+                                    viewModel.setSelectedPlaylist(position)
+                                    viewModel.setPlaylistId(playlist.id)
+                                    requireActivity().onBackPressed()
+                                }
                             }
-                        })
+                        )
                     binding.playlists.apply {
                         layoutManager = LinearLayoutManager(context)
                         setHasFixedSize(true)
@@ -59,6 +63,7 @@ class PlaylistsFragment : Fragment() {
                     playlistAdapter.dataSetChange(result.items)
                     playlistAdapter.notifyDataSetChanged()
                 }
-            })
+            }
+        )
     }
 }
