@@ -16,9 +16,8 @@
 
 ## Features
 - [x]   Fetching user's playlist
-- [ ]   Can be used as a normal alarm app 
-- [ ]   Flexible labels 
-- [ ]   ML to anticipate alarm song
+- [x]   Can be used as a normal alarm app 
+- [x]   ML to anticipate alarm song
  
 <br>
 
