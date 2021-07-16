@@ -30,6 +30,7 @@ import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
 import com.dscvit.cadence.alarm.AlarmReceiver
 import com.dscvit.cadence.databinding.FragmentAddAlarmBinding
+import com.dscvit.cadence.model.song.TracksData
 import com.dscvit.cadence.ui.home.HomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -122,25 +123,7 @@ class AddAlarmFragment : Fragment() {
         val error = v.findViewById<TextView>(R.id.error)
         val errorDesc = v.findViewById<TextView>(R.id.error_description)
         val progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
-        val factory =
-            DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
 
-        viewModel.trackData.observe(
-            viewLifecycleOwner,
-            { trackData ->
-                if (viewModel.alarmInserted.value == 3) {
-                    songName.text = trackData.tracks[0].name
-                    songArtist.text = trackData.tracks[0].artists[0].name
-                    Glide.with(songArt.context)
-                        .load(trackData.tracks[0].album.images[0].url)
-                        .transition(DrawableTransitionOptions.withCrossFade(factory))
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .into(songArt)
-                    continueBtn.isEnabled = true
-                }
-            }
-        )
 
         continueBtn.setOnClickListener {
             viewModel.setAlarmInserted(4)
@@ -170,40 +153,6 @@ class AddAlarmFragment : Fragment() {
             }
         }
 
-//        viewModel.alarmId.observe(viewLifecycleOwner, { id ->
-//            if (id >= 0) {
-//                val alarmManager =
-//                    requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//                val i = Intent(context, AlarmReceiver::class.java)
-//                i.putExtra("ALARM_ID", id)
-//                val pi = PendingIntent.getBroadcast(context, id.toInt(), i, 0)
-//
-//                val now = Calendar.getInstance()
-//                val schedule = now.clone() as Calendar
-//                schedule[Calendar.HOUR_OF_DAY] = viewModel.hour.value!!
-//                schedule[Calendar.MINUTE] = viewModel.min.value!!
-//                schedule[Calendar.SECOND] = 0
-//                schedule[Calendar.MILLISECOND] = 0
-//
-//                if (schedule <= now) schedule.add(Calendar.DATE, 1)
-//
-//                if (!recList.contains(true)) {
-// //                    val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
-// //                    alarmManager.setAlarmClock(info, pi)
-//                    alarmManager.setExactAndAllowWhileIdle(
-//                        AlarmManager.RTC_WAKEUP,
-//                        schedule.timeInMillis,
-//                        pi
-//                    )
-//                    Toast.makeText(
-//                        context,
-//                        "Alarm scheduled for ${viewModel.time.value}",
-//                        Toast.LENGTH_LONG
-//                    ).show()
-//                }
-//            }
-//        })
-
         viewModel.alarmInserted.observe(
             viewLifecycleOwner,
             { isInserted ->
@@ -215,17 +164,6 @@ class AddAlarmFragment : Fragment() {
                                 requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
                             val i = Intent(context, AlarmReceiver::class.java)
                             i.putExtra("ALARM_ID", id)
-                            i.putExtra("SONG_ID", viewModel.songId.value?.song)
-                            i.putExtra("SONG_NAME", viewModel.trackData.value?.tracks?.get(0)?.name)
-                            i.putExtra(
-                                "SONG_ARTIST",
-                                viewModel.trackData.value?.tracks?.get(0)?.artists?.get(0)?.name
-                            )
-                            i.putExtra(
-                                "SONG_ART",
-                                viewModel.trackData.value?.tracks?.get(0)?.album?.images?.get(0)?.url
-                            )
-                            i.putExtra("SONG_URL", viewModel.trackData.value?.tracks?.get(0)?.href)
                             val pi = PendingIntent.getBroadcast(context, id.toInt(), i, 0)
 
                             val now = Calendar.getInstance()
@@ -235,16 +173,15 @@ class AddAlarmFragment : Fragment() {
                             schedule[Calendar.SECOND] = 0
                             schedule[Calendar.MILLISECOND] = 0
 
-                            if (schedule <= now) schedule.add(Calendar.DATE, 1)
-
                             if (!recList.contains(true)) {
-//                            val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
-//                            alarmManager.setAlarmClock(info, pi)
-                                alarmManager.setExactAndAllowWhileIdle(
-                                    AlarmManager.RTC_WAKEUP,
-                                    schedule.timeInMillis,
-                                    pi
-                                )
+                                if (schedule <= now) schedule.add(Calendar.DATE, 1)
+                                val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
+                                alarmManager.setAlarmClock(info, pi)
+//                                alarmManager.setExactAndAllowWhileIdle(
+//                                    AlarmManager.RTC_WAKEUP,
+//                                    schedule.timeInMillis,
+//                                    pi
+//                                )
                                 Toast.makeText(
                                     context,
                                     "Alarm scheduled for ${viewModel.time.value}",
@@ -259,6 +196,13 @@ class AddAlarmFragment : Fragment() {
                     3 -> {
                         progressBar.setProgress(100, true)
                         loadingLayout.visibility = View.GONE
+                        setSongLayout(
+                            viewModel.trackData.value!!,
+                            songName,
+                            songArtist,
+                            songArt,
+                            continueBtn
+                        )
                     }
                     2 -> {
                         progressBar.setProgress(90, true)
@@ -342,6 +286,25 @@ class AddAlarmFragment : Fragment() {
                 }
             }
         )
+    }
+
+    private fun setSongLayout(
+        trackData: TracksData,
+        songName: TextView,
+        songArtist: TextView,
+        songArt: ImageView,
+        continueBtn: Button
+    ) {
+        val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
+        songName.text = trackData.tracks[0].name
+        songArtist.text = trackData.tracks[0].artists[0].name
+        Glide.with(songArt.context)
+            .load(trackData.tracks[0].album.images[0].url)
+            .transition(DrawableTransitionOptions.withCrossFade(factory))
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .centerCrop()
+            .into(songArt)
+        continueBtn.isEnabled = true
     }
 
     private fun setPlaylistLayout(playLen: Int?, pn: Int) {

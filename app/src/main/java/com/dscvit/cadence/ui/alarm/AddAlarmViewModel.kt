@@ -84,13 +84,14 @@ class AddAlarmViewModel
             repositoryApi.getSongData(postParam).let { response ->
                 if (response.isSuccessful) {
                     _songId.postValue(response.body())
-                    response.body()?.let { insertAlarm(name, days, it, token) }
+                    response.body()?.let { getTracksData(name, days, it, token) }
                 } else {
                     setAlarmInserted(-1)
                     Timber.d("Failed to fetch song")
                 }
             }
         } catch (e: Exception) {
+            Timber.d("Failed to fetch song: $e")
             setAlarmInserted(-3)
         }
     }
@@ -107,9 +108,10 @@ class AddAlarmViewModel
         _alarmInserted.postValue(r)
     }
 
-    private fun insertAlarm(name: String, days: List<Boolean>, sid: Song, token: String): Long {
+    private fun insertAlarm(name: String, days: List<Boolean>, sid: Song, token: String, td: TracksData): Long {
         if (sid.intent == null || sid.intent == "") sid.intent = "nan"
         if (sid.song != null && sid.song != "") {
+
             val alarm = Alarm(
                 alarmName = name,
                 hour = hour.value!!,
@@ -121,17 +123,21 @@ class AddAlarmViewModel
                 friday = days[4],
                 saturday = days[5],
                 sunday = days[6],
+                isRepeating = days.contains(true),
+                isOn = true,
                 playlistId = playlistId.value!!,
                 songId = sid.song,
                 type = sid.intent,
-                isOn = true
+                songUrl = td.tracks[0].href,
+                songArt = td.tracks[0].album.images[0].url,
+                songName = td.tracks[0].name,
+                songArtist = td.tracks[0].artists[0].name,
             )
             var id: Long = 0
             viewModelScope.launch(Dispatchers.IO) {
                 id = repository.insertAlarm(alarm)
                 setAlarmId(id)
-                setAlarmInserted(2)
-                getTracksData(token, sid.song)
+                setAlarmInserted(3)
             }
             return id
         }
@@ -143,13 +149,14 @@ class AddAlarmViewModel
     private val _trackData = MutableLiveData<TracksData>()
     val trackData: LiveData<TracksData> get() = _trackData
 
-    private fun getTracksData(token: String, id: String) = viewModelScope.launch {
+    private fun getTracksData(name: String, days: List<Boolean>, sid: Song, token: String) = viewModelScope.launch {
         try {
-            repositoryApi.getTracksData("Bearer $token", id.substring(14, id.length))
+            repositoryApi.getTracksData("Bearer $token", sid.song.substring(14, sid.song.length))
                 .let { response ->
                     if (response.isSuccessful) {
-                        setAlarmInserted(3)
+                        setAlarmInserted(2)
                         _trackData.postValue(response.body())
+                        response.body()?.let { insertAlarm(name, days, sid, token, it) }
                     } else {
                         setAlarmInserted(-2)
                         Timber.d("Failed to fetch song data $token ${response.raw()}")

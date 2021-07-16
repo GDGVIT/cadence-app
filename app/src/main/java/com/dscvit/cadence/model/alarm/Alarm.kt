@@ -17,8 +17,13 @@ data class Alarm(
     val friday: Boolean,
     val saturday: Boolean,
     val sunday: Boolean,
+    val isRepeating: Boolean,
+    var isOn: Boolean,
     val playlistId: String,
     val songId: String,
     val type: String,
-    var isOn: Boolean
+    val songName: String,
+    val songArtist: String,
+    val songArt: String,
+    val songUrl: String,
 )

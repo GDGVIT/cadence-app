@@ -18,17 +18,18 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import timber.log.Timber
+import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AlarmService : Service() {
     @Inject
     lateinit var repository: AlarmRepository
-
-    lateinit var spotifyAppRemote: SpotifyAppRemote
-
-    //    private var mediaPlayer: MediaPlayer? = null
+    var spotifyAppRemote: SpotifyAppRemote? = null
+//    private var mediaPlayer: MediaPlayer? = null
 //    private var vibrator: Vibrator? = null
+
     override fun onCreate() {
         super.onCreate()
 //        mediaPlayer = MediaPlayer.create(this, R.raw.alarm)
@@ -37,37 +38,43 @@ class AlarmService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val notificationIntent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
-        val id = intent.getLongExtra("ALARM_ID", -1)
-        val songId = intent.getStringExtra("SONG_ID")
-        val songName = intent.getStringExtra("SONG_NAME")
-        val songArtist = intent.getStringExtra("SONG_ARTIST")
-        val songArt = intent.getStringExtra("SONG_ART")
-        val songUrl = intent.getStringExtra("SONG_URL")
-        Toast.makeText(this, "SERVICE", Toast.LENGTH_SHORT).show()
-        var notification: Notification? = null
-        if (id >= 0) {
-            runBlocking {
-                val alarm = async { repository.getAlarmById(id) }
-                runBlocking {
-                    notification = sendNotif(
-                        this@AlarmService,
-                        alarm.await(),
-                        songId,
-                        songName,
-                        songArtist,
-                        pendingIntent
-                    )
+        try {
+            if (intent.action == "ACTION_STOP_SERVICE") {
+                stopForeground(true)
+                stopSelf()
+                return START_NOT_STICKY
+            } else {
+                val notificationIntent = Intent(this, MainActivity::class.java)
+                val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+                val id = intent.getLongExtra("ALARM_ID", -1)
+                val now = Calendar.getInstance()
+                var notification: Notification?
+                if (id >= 0) {
+                    runBlocking {
+                        val alarm = async { repository.getAlarmById(id) }
+                        runBlocking {
+                            Timber.d("${alarm.await().hour}, ${now[Calendar.HOUR]}")
+                            if (alarm.await().hour == now[Calendar.HOUR_OF_DAY] && alarm.await().minute == now[Calendar.MINUTE]) {
+                                notification = sendNotif(
+                                    this@AlarmService,
+                                    alarm.await(),
+                                    pendingIntent
+                                )
+                                alarm.await().isOn = false
+                                repository.updateAlarm(alarm.await())
+                                playSong(alarm.await().songId, alarm.await().songUrl)
+                                startForeground(id.toInt(), notification)
+                            }
+                        }
+                    }
                 }
-            }
-        }
-        playSong(songId, songUrl)
 //        mediaPlayer!!.start()
 //        val pattern = longArrayOf(0, 100, 1000)
 //        vibrator!!.vibrate(pattern, 0)
-        startForeground(id.toInt(), notification)
-        stopForeground(false)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "$e", Toast.LENGTH_SHORT).show()
+        }
         return START_STICKY
     }
 
@@ -75,8 +82,10 @@ class AlarmService : Service() {
         super.onDestroy()
 //        mediaPlayer!!.stop()
 //        vibrator!!.cancel()
-        spotifyAppRemote.let {
-            SpotifyAppRemote.disconnect(it)
+        if (spotifyAppRemote != null) {
+            spotifyAppRemote.let {
+                SpotifyAppRemote.disconnect(it)
+            }
         }
     }
 
@@ -103,7 +112,6 @@ class AlarmService : Service() {
                     val i = Intent(Intent.ACTION_VIEW)
                     i.data = Uri.parse(songUrl)
                     startActivity(i)
-                    // Something went wrong when attempting to connect! Handle errors here
                 }
             }
         )
@@ -112,20 +120,21 @@ class AlarmService : Service() {
     private fun sendNotif(
         context: Context,
         alarm: Alarm,
-        songId: String?,
-        songName: String?,
-        songArtist: String?,
         pendingIntent: PendingIntent
     ): Notification {
-        Toast.makeText(context, "ALARM TIME ${alarm.id} $songName", Toast.LENGTH_LONG).show()
+        val stopSelf = Intent(this, AlarmService::class.java)
+        stopSelf.action = "ACTION_STOP_SERVICE"
+        val cancelIntent =
+            PendingIntent.getService(this, 0, stopSelf, PendingIntent.FLAG_CANCEL_CURRENT)
         return NotificationHelper.sendNotification(
             context,
             alarm.alarmName,
-            "Now Playing $songName",
-            "Now Playing $songName by $songArtist",
+            "Now Playing ${alarm.songName}",
+            "Now Playing ${alarm.songName} by ${alarm.songArtist}",
             "Alarms",
             (alarm.id?.rem(Int.MAX_VALUE.toLong()))!!.toInt(),
-            pendingIntent
+            pendingIntent,
+            cancelIntent
         )
     }
 }

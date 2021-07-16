@@ -47,7 +47,8 @@ object NotificationHelper {
         bigText: String,
         channelName: String,
         notificationId: Int,
-        pendingIntent: PendingIntent
+        pendingIntent: PendingIntent,
+        cancelIntent: PendingIntent
     ): Notification {
         val channelId = "${context.packageName}-$channelName"
 //        val intent = Intent(context, MainActivity::class.java)
@@ -63,6 +64,7 @@ object NotificationHelper {
             )
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
+            .addAction(R.drawable.ic_close, "Dismiss", cancelIntent)
             .setAutoCancel(true)
 
 //        with(NotificationManagerCompat.from(context)) {
