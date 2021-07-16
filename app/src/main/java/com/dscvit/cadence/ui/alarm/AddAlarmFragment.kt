@@ -124,7 +124,6 @@ class AddAlarmFragment : Fragment() {
         val errorDesc = v.findViewById<TextView>(R.id.error_description)
         val progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
 
-
         continueBtn.setOnClickListener {
             viewModel.setAlarmInserted(4)
             dialog.dismiss()

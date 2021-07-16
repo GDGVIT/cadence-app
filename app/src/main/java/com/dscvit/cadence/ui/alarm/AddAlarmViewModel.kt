@@ -108,7 +108,12 @@ class AddAlarmViewModel
         _alarmInserted.postValue(r)
     }
 
-    private fun insertAlarm(name: String, days: List<Boolean>, sid: Song, token: String, td: TracksData): Long {
+    private fun insertAlarm(
+        name: String,
+        days: List<Boolean>,
+        sid: Song,
+        td: TracksData
+    ): Long {
         if (sid.intent == null || sid.intent == "") sid.intent = "nan"
         if (sid.song != null && sid.song != "") {
 
@@ -149,23 +154,27 @@ class AddAlarmViewModel
     private val _trackData = MutableLiveData<TracksData>()
     val trackData: LiveData<TracksData> get() = _trackData
 
-    private fun getTracksData(name: String, days: List<Boolean>, sid: Song, token: String) = viewModelScope.launch {
-        try {
-            repositoryApi.getTracksData("Bearer $token", sid.song.substring(14, sid.song.length))
-                .let { response ->
-                    if (response.isSuccessful) {
-                        setAlarmInserted(2)
-                        _trackData.postValue(response.body())
-                        response.body()?.let { insertAlarm(name, days, sid, token, it) }
-                    } else {
-                        setAlarmInserted(-2)
-                        Timber.d("Failed to fetch song data $token ${response.raw()}")
+    private fun getTracksData(name: String, days: List<Boolean>, sid: Song, token: String) =
+        viewModelScope.launch {
+            try {
+                repositoryApi.getTracksData(
+                    "Bearer $token",
+                    sid.song.substring(14, sid.song.length)
+                )
+                    .let { response ->
+                        if (response.isSuccessful) {
+                            setAlarmInserted(2)
+                            _trackData.postValue(response.body())
+                            response.body()?.let { insertAlarm(name, days, sid, it) }
+                        } else {
+                            setAlarmInserted(-2)
+                            Timber.d("Failed to fetch song data $token ${response.raw()}")
+                        }
                     }
-                }
-        } catch (e: Exception) {
-            setAlarmInserted(-2)
+            } catch (e: Exception) {
+                setAlarmInserted(-2)
+            }
         }
-    }
 
     init {
         setSelectedPlaylist(0)
