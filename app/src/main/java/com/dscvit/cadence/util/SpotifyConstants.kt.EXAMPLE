@@ -1,0 +1,10 @@
+package com.dscvit.cadence.utils
+
+object SpotifyConstants {
+    const val REQUEST_CODE = 1337
+    const val CLIENT_ID = ""
+    const val AUTH_TOKEN_REQUEST_CODE = 0x10
+    const val REDIRECT_URI = ""
+    const val TAG = ""
+    const val BASE_URL = ""
+}

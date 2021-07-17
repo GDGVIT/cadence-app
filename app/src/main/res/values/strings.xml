@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Cadence</string>
+    <string name="warning_need_token">You need to request an access token first</string>
+    <string name="code">Code: %1$s</string>
+    <string name="token">Access Token: %1$s</string>
+    <string name="btn_get_profile">Get User Profile</string>
+    <string name="btn_req_code">Request Code</string>
+    <string name="btn_req_token">Request Token</string>
+    <string name="btn_clear_credentials">Clear WebView Credentials</string>
+    <string name="log_in_with_spotify">Log in with Spotify</string>
+    <string name="get_started">Let’s Get Started!</string>
+    <string name="consent_stuff">Cadence authentictes with Spotify and will read your:\n\n• <font color="#e91583">Profile Image</font> and basic details\n• <font color="#e91583">Your Playlists</font> (Private and Public)</string>
+    <string name="continue_consent">Continue</string>
+    <string name="alarms">Alarms</string>
+    <string name="playlists">Playlists</string>
+    <string name="set_alarm">Set Alarm</string>
+    <string name="mon">M</string>
+    <string name="tue">T</string>
+    <string name="wed">W</string>
+    <string name="thu">T</string>
+    <string name="fri">F</string>
+    <string name="sat">S</string>
+    <string name="sun">S</string>
+    <string name="confirm">Confirm</string>
+    <string name="alarm_name_title">Alarm Name</string>
+    <string name="time">Time</string>
+    <string name="repeat">Repeat</string>
+    <string name="title_playlist">Playlist</string>
+    <string name="select_time">Select Time</string>
+    <string name="change">Change</string>
+    <string name="select_playlists">Playlists</string>
+    <string name="continue_btn_text">Continue</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="suggested_song">Suggested Song</string>
+    <string name="swipe_to_dismiss">Swipe to dismiss</string>
+</resources>
