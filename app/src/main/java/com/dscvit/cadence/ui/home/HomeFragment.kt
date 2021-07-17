@@ -13,7 +13,9 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -31,6 +33,7 @@ import com.dscvit.cadence.model.alarm.Alarm
 import com.dscvit.cadence.util.OnEditAlarmListener
 import com.dscvit.cadence.util.SpotifyConstants.CLIENT_ID
 import com.dscvit.cadence.util.SpotifyConstants.REDIRECT_URI
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -137,12 +140,39 @@ class HomeFragment : Fragment() {
                                             setAlarm(alarm)
                                         else
                                             cancelAlarm(alarm)
-
                                     }
 
                                     override fun onDelete(alarm: Alarm) {
-                                        viewModel.deleteAlarm(alarm.id!!)
-                                        cancelAlarm(alarm)
+                                        val v: View = LayoutInflater
+                                            .from(context)
+                                            .inflate(R.layout.dialog_alarm_options, null)
+
+                                        val dialog = MaterialAlertDialogBuilder(requireContext())
+                                            .setView(v)
+                                            .setBackground(
+                                                AppCompatResources.getDrawable(
+                                                    requireContext(),
+                                                    R.color.transparent
+                                                )
+                                            )
+                                            .create()
+
+                                        dialog.setCanceledOnTouchOutside(false)
+                                        dialog.setCancelable(false)
+
+                                        val deleteBtn = v.findViewById<Button>(R.id.delete_btn)
+                                        val cancelBtn = v.findViewById<Button>(R.id.cancel_btn)
+
+                                        deleteBtn.setOnClickListener {
+                                            cancelAlarm(alarm)
+                                            viewModel.deleteAlarm(alarm.id!!)
+                                            dialog.dismiss()
+                                        }
+
+                                        cancelBtn.setOnClickListener {
+                                            dialog.dismiss()
+                                        }
+                                        dialog.show()
                                     }
                                 }
                             )
@@ -292,9 +322,7 @@ class HomeFragment : Fragment() {
     private fun setAlarm(alarm: Alarm) {
         val alarmManager =
             requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val i = Intent(context, AlarmReceiver::class.java)
-        i.putExtra("ALARM_ID", alarm.id)
-        val pi = PendingIntent.getBroadcast(context, alarm.id!!.toInt(), i, 0)
+        val pi = getPendingIntent(alarm)
 
         val now = Calendar.getInstance()
         val schedule = now.clone() as Calendar
@@ -307,11 +335,6 @@ class HomeFragment : Fragment() {
             if (schedule <= now) schedule.add(Calendar.DATE, 1)
             val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
             alarmManager.setAlarmClock(info, pi)
-//            alarmManager.setExactAndAllowWhileIdle(
-//                AlarmManager.RTC_WAKEUP,
-//                schedule.timeInMillis,
-//                pi
-//            )
             Toast.makeText(
                 context,
                 "Alarm scheduled for ${alarm.time}",
@@ -323,19 +346,23 @@ class HomeFragment : Fragment() {
     private fun cancelAlarm(alarm: Alarm) {
         val alarmManager =
             requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val i = Intent(context, AlarmReceiver::class.java)
-        i.putExtra("ALARM_ID", alarm.id)
-        val pi = PendingIntent.getBroadcast(context, alarm.id!!.toInt(), i, 0)
+        val pi = getPendingIntent(alarm)
         alarmManager.cancel(pi)
-//            alarmManager.setExactAndAllowWhileIdle(
-//                AlarmManager.RTC_WAKEUP,
-//                schedule.timeInMillis,
-//                pi
-//            )
         Toast.makeText(
             context,
             "Alarm cancelled for ${alarm.time}",
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    private fun getPendingIntent(alarm: Alarm): PendingIntent? {
+        val i = Intent(context, AlarmReceiver::class.java)
+        i.putExtra("ALARM_ID", alarm.id)
+        return PendingIntent.getBroadcast(
+            context,
+            alarm.id!!.toInt(),
+            i,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 }

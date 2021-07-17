@@ -9,6 +9,12 @@ import com.dscvit.cadence.model.ml.Song
 import com.dscvit.cadence.model.song.TracksData
 import com.dscvit.cadence.repository.AlarmRepository
 import com.dscvit.cadence.repository.SpotifyRepository
+import com.dscvit.cadence.util.Constants.ALARM_INSET_COMPLETE
+import com.dscvit.cadence.util.Constants.NOT_STARTED
+import com.dscvit.cadence.util.Constants.NO_INTERNET
+import com.dscvit.cadence.util.Constants.PLAYLIST_FAILED
+import com.dscvit.cadence.util.Constants.SPOTIFY_FAILED
+import com.dscvit.cadence.util.Constants.TRACK_FETCH_COMPLETE
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -86,13 +92,13 @@ class AddAlarmViewModel
                     _songId.postValue(response.body())
                     response.body()?.let { getTracksData(name, days, it, token) }
                 } else {
-                    setAlarmInserted(-1)
+                    setAlarmInserted(PLAYLIST_FAILED)
                     Timber.d("Failed to fetch song")
                 }
             }
         } catch (e: Exception) {
             Timber.d("Failed to fetch song: $e")
-            setAlarmInserted(-3)
+            setAlarmInserted(NO_INTERNET)
         }
     }
 
@@ -143,12 +149,12 @@ class AddAlarmViewModel
             viewModelScope.launch(Dispatchers.IO) {
                 id = repository.insertAlarm(alarm)
                 setAlarmId(id)
-                setAlarmInserted(3)
+                setAlarmInserted(ALARM_INSET_COMPLETE)
             }
             return id
         }
         Timber.d("WOW: ${playlistId.value} ${sid.song}")
-        setAlarmInserted(-1)
+        setAlarmInserted(PLAYLIST_FAILED)
         return -1
     }
 
@@ -164,20 +170,20 @@ class AddAlarmViewModel
                 )
                     .let { response ->
                         if (response.isSuccessful) {
-                            setAlarmInserted(2)
+                            setAlarmInserted(TRACK_FETCH_COMPLETE)
                             _trackData.postValue(response.body())
                             response.body()?.let { insertAlarm(name, days, sid, it) }
                         } else {
-                            setAlarmInserted(-2)
+                            setAlarmInserted(SPOTIFY_FAILED)
                             Timber.d("Failed to fetch song data $token ${response.raw()}")
                         }
                     }
             } catch (e: Exception) {
-                setAlarmInserted(-2)
+                setAlarmInserted(SPOTIFY_FAILED)
             }
         }
 
     init {
-        setSelectedPlaylist(0)
+        setSelectedPlaylist(NOT_STARTED)
     }
 }

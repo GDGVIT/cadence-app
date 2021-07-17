@@ -1,5 +1,7 @@
 package com.dscvit.cadence.adapter
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,6 +51,12 @@ class PlaylistAdapter(
                 .into(imageView)
             itemView.setOnClickListener {
                 spotifyAppRemote.playerApi.play("spotify:playlist:${currPlaylist.id}")
+            }
+            itemView.setOnLongClickListener {
+                val i = Intent(Intent.ACTION_VIEW)
+                i.data = Uri.parse(currPlaylist.external_urls.spotify)
+                itemView.context.startActivity(i)
+                true
             }
         }
     }

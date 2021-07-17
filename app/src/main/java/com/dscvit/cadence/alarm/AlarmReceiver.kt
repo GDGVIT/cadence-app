@@ -8,7 +8,6 @@ import com.dscvit.cadence.repository.AlarmRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -25,7 +24,9 @@ class AlarmReceiver : BroadcastReceiver() {
             runBlocking {
                 val alarm = async { repository.getAlarmById(id!!) }
                 runBlocking {
-                    if (alarm.await().hour == now[Calendar.HOUR_OF_DAY] && alarm.await().minute == now[Calendar.MINUTE]) {
+                    if (alarm.await().hour == now[Calendar.HOUR_OF_DAY] &&
+                        alarm.await().minute == now[Calendar.MINUTE]
+                    ) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             context.startForegroundService(intentService)
                         } else {

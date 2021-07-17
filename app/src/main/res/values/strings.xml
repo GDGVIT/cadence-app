@@ -33,4 +33,6 @@
     <string name="dismiss">Dismiss</string>
     <string name="suggested_song">Suggested Song</string>
     <string name="swipe_to_dismiss">Swipe to dismiss</string>
+    <string name="delete_alarm">Delete Alarm</string>
+    <string name="cancel">Cancel</string>
 </resources>

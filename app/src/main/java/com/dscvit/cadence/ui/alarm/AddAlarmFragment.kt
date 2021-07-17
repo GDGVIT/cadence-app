@@ -32,6 +32,14 @@ import com.dscvit.cadence.alarm.AlarmReceiver
 import com.dscvit.cadence.databinding.FragmentAddAlarmBinding
 import com.dscvit.cadence.model.song.TracksData
 import com.dscvit.cadence.ui.home.HomeViewModel
+import com.dscvit.cadence.util.Constants.ALARM_INSET_COMPLETE
+import com.dscvit.cadence.util.Constants.CONTINUE_PRESSED
+import com.dscvit.cadence.util.Constants.NOT_STARTED
+import com.dscvit.cadence.util.Constants.NO_INTERNET
+import com.dscvit.cadence.util.Constants.PLAYLIST_FAILED
+import com.dscvit.cadence.util.Constants.SPOTIFY_FAILED
+import com.dscvit.cadence.util.Constants.STARTED
+import com.dscvit.cadence.util.Constants.TRACK_FETCH_COMPLETE
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -76,7 +84,7 @@ class AddAlarmFragment : Fragment() {
         prefs = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE)
         val token = prefs.getString("token", "").toString()
         viewModel.setIs24Hr(is24HourFormat(requireContext()))
-        viewModel.setAlarmInserted(0)
+        viewModel.setAlarmInserted(NOT_STARTED)
         viewModel.setAlarmId(-1)
         binding.apply {
             val paint = digitalClock.paint
@@ -125,13 +133,13 @@ class AddAlarmFragment : Fragment() {
         val progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
 
         continueBtn.setOnClickListener {
-            viewModel.setAlarmInserted(4)
+            viewModel.setAlarmInserted(CONTINUE_PRESSED)
             dialog.dismiss()
         }
 
         binding.nextBtn.setOnClickListener {
             if (binding.alarmEditField.text.toString().trim() != "") {
-                viewModel.setAlarmInserted(2)
+                viewModel.setAlarmInserted(STARTED)
                 recList = listOf(
                     binding.toggleMon.isChecked,
                     binding.toggleTue.isChecked,
@@ -156,7 +164,7 @@ class AddAlarmFragment : Fragment() {
             viewLifecycleOwner,
             { isInserted ->
                 when (isInserted) {
-                    4 -> {
+                    CONTINUE_PRESSED -> {
                         val id = viewModel.alarmId.value!!
                         if (id >= 0) {
                             val alarmManager =
@@ -176,11 +184,6 @@ class AddAlarmFragment : Fragment() {
                                 if (schedule <= now) schedule.add(Calendar.DATE, 1)
                                 val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
                                 alarmManager.setAlarmClock(info, pi)
-//                                alarmManager.setExactAndAllowWhileIdle(
-//                                    AlarmManager.RTC_WAKEUP,
-//                                    schedule.timeInMillis,
-//                                    pi
-//                                )
                                 Toast.makeText(
                                     context,
                                     "Alarm scheduled for ${viewModel.time.value}",
@@ -189,10 +192,10 @@ class AddAlarmFragment : Fragment() {
                             }
                         }
                         viewModel.setAlarmId(-1)
-                        viewModel.setAlarmInserted(0)
+                        viewModel.setAlarmInserted(NOT_STARTED)
                         requireView().findNavController().navigate(R.id.add_alarm_to_home)
                     }
-                    3 -> {
+                    ALARM_INSET_COMPLETE -> {
                         progressBar.setProgress(100, true)
                         loadingLayout.visibility = View.GONE
                         setSongLayout(
@@ -203,23 +206,23 @@ class AddAlarmFragment : Fragment() {
                             continueBtn
                         )
                     }
-                    2 -> {
+                    TRACK_FETCH_COMPLETE -> {
                         progressBar.setProgress(90, true)
                     }
-                    1 -> {
-                        progressBar.setProgress(70, true)
+                    STARTED -> {
+                        progressBar.setProgress(85, true)
                     }
-                    0 -> {
+                    NOT_STARTED -> {
                         progressBar.setProgress(0, true)
                     }
-                    -1 -> {
+                    PLAYLIST_FAILED -> {
                         continueBtn.isEnabled = true
                         progressBar.visibility = View.GONE
                         errorImageView.visibility = View.VISIBLE
                         error.text = "Incompatible Playlist"
                         errorDesc.text = "Please use some other playlist"
                     }
-                    -2 -> {
+                    SPOTIFY_FAILED -> {
                         continueBtn.isEnabled = true
                         progressBar.visibility = View.GONE
                         errorImageView.visibility = View.VISIBLE
@@ -227,7 +230,7 @@ class AddAlarmFragment : Fragment() {
                         error.text = "Fetch Failed!"
                         errorDesc.text = "Spotify didn't send the song data"
                     }
-                    -3 -> {
+                    NO_INTERNET -> {
                         continueBtn.isEnabled = true
                         progressBar.visibility = View.GONE
                         errorImageView.visibility = View.VISIBLE
@@ -251,13 +254,20 @@ class AddAlarmFragment : Fragment() {
             setOnClickListener {
                 val picker =
                     MaterialTimePicker.Builder()
-                        .setTimeFormat(if (viewModel.is24hr.value == true) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
+                        .setTimeFormat(
+                            if (viewModel.is24hr.value == true) TimeFormat.CLOCK_24H
+                            else TimeFormat.CLOCK_12H
+                        )
                         .setHour((if (viewModel.hour.value != null) viewModel.hour.value else 0)!!)
                         .setMinute((if (viewModel.min.value != null) viewModel.min.value else 0)!!)
                         .build()
                 picker.show(childFragmentManager, "fragment_tag")
                 picker.addOnPositiveButtonClickListener {
-                    viewModel.setTime(picker.hour, picker.minute, viewModel.is24hr.value == true)
+                    viewModel.setTime(
+                        picker.hour,
+                        picker.minute,
+                        viewModel.is24hr.value == true
+                    )
                 }
             }
         }

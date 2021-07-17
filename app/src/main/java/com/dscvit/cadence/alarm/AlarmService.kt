@@ -18,7 +18,6 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
 
