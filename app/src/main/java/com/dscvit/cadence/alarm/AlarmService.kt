@@ -53,7 +53,6 @@ class AlarmService : Service() {
                     runBlocking {
                         val alarm = async { repository.getAlarmById(id) }
                         runBlocking {
-                            Timber.d("${alarm.await().hour}, ${now[Calendar.HOUR]}")
                             if (alarm.await().hour == now[Calendar.HOUR_OF_DAY] && alarm.await().minute == now[Calendar.MINUTE]) {
                                 notification = sendNotif(
                                     this@AlarmService,
@@ -64,6 +63,8 @@ class AlarmService : Service() {
                                 repository.updateAlarm(alarm.await())
                                 playSong(alarm.await().songId, alarm.await().songUrl)
                                 startForeground(id.toInt(), notification)
+                            } else {
+                                stopSelf()
                             }
                         }
                     }

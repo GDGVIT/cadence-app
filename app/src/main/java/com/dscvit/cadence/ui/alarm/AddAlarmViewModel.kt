@@ -121,6 +121,7 @@ class AddAlarmViewModel
                 alarmName = name,
                 hour = hour.value!!,
                 minute = min.value!!,
+                time = time.value!!,
                 monday = days[0],
                 tuesday = days[1],
                 wednesday = days[2],

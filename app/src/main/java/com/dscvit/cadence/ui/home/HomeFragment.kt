@@ -1,5 +1,8 @@
 package com.dscvit.cadence.ui.home
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Context.POWER_SERVICE
 import android.content.Intent
@@ -22,6 +25,7 @@ import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
 import com.dscvit.cadence.adapter.AlarmAdapter
 import com.dscvit.cadence.adapter.PlaylistAdapter
+import com.dscvit.cadence.alarm.AlarmReceiver
 import com.dscvit.cadence.databinding.FragmentHomeBinding
 import com.dscvit.cadence.model.alarm.Alarm
 import com.dscvit.cadence.util.OnEditAlarmListener
@@ -32,6 +36,7 @@ import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.util.Calendar
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -128,10 +133,16 @@ class HomeFragment : Fragment() {
                                 object : OnEditAlarmListener {
                                     override fun onToggle(alarm: Alarm) {
                                         viewModel.updateAlarm(alarm)
+                                        if (alarm.isOn)
+                                            setAlarm(alarm)
+                                        else
+                                            cancelAlarm(alarm)
+
                                     }
 
                                     override fun onDelete(alarm: Alarm) {
                                         viewModel.deleteAlarm(alarm.id!!)
+                                        cancelAlarm(alarm)
                                     }
                                 }
                             )
@@ -276,5 +287,55 @@ class HomeFragment : Fragment() {
         viewModel.spotifyAppRemote.value.let {
             SpotifyAppRemote.disconnect(it)
         }
+    }
+
+    private fun setAlarm(alarm: Alarm) {
+        val alarmManager =
+            requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val i = Intent(context, AlarmReceiver::class.java)
+        i.putExtra("ALARM_ID", alarm.id)
+        val pi = PendingIntent.getBroadcast(context, alarm.id!!.toInt(), i, 0)
+
+        val now = Calendar.getInstance()
+        val schedule = now.clone() as Calendar
+        schedule[Calendar.HOUR_OF_DAY] = alarm.hour
+        schedule[Calendar.MINUTE] = alarm.minute
+        schedule[Calendar.SECOND] = 0
+        schedule[Calendar.MILLISECOND] = 0
+
+        if (!alarm.isRepeating) {
+            if (schedule <= now) schedule.add(Calendar.DATE, 1)
+            val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
+            alarmManager.setAlarmClock(info, pi)
+//            alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                schedule.timeInMillis,
+//                pi
+//            )
+            Toast.makeText(
+                context,
+                "Alarm scheduled for ${alarm.time}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun cancelAlarm(alarm: Alarm) {
+        val alarmManager =
+            requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val i = Intent(context, AlarmReceiver::class.java)
+        i.putExtra("ALARM_ID", alarm.id)
+        val pi = PendingIntent.getBroadcast(context, alarm.id!!.toInt(), i, 0)
+        alarmManager.cancel(pi)
+//            alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                schedule.timeInMillis,
+//                pi
+//            )
+        Toast.makeText(
+            context,
+            "Alarm cancelled for ${alarm.time}",
+            Toast.LENGTH_LONG
+        ).show()
     }
 }
