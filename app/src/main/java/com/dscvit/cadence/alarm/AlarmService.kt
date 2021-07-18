@@ -82,7 +82,6 @@ class AlarmService : Service() {
                                         0
                                     )
 
-                                    val now = Calendar.getInstance()
                                     val schedule = now.clone() as Calendar
                                     schedule[Calendar.HOUR_OF_DAY] = alarm.await().hour
                                     schedule[Calendar.MINUTE] = alarm.await().minute
