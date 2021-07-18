@@ -39,6 +39,12 @@
             android:name="com.spotify.sdk.android.auth.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
+        <receiver android:name=".alarm.DeviceBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <receiver android:name=".alarm.AlarmReceiver" />
 
         <service android:name=".alarm.AlarmService" />
