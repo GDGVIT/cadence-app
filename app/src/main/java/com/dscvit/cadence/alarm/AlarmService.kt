@@ -1,5 +1,6 @@
 package com.dscvit.cadence.alarm
 
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -18,6 +19,7 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -44,7 +46,12 @@ class AlarmService : Service() {
                 return START_NOT_STICKY
             } else {
                 val notificationIntent = Intent(this, MainActivity::class.java)
-                val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+                val pendingIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    notificationIntent,
+                    0
+                )
                 val id = intent.getLongExtra("ALARM_ID", -1)
                 val now = Calendar.getInstance()
                 var notification: Notification?
@@ -52,14 +59,69 @@ class AlarmService : Service() {
                     runBlocking {
                         val alarm = async { repository.getAlarmById(id) }
                         runBlocking {
-                            if (alarm.await().hour == now[Calendar.HOUR_OF_DAY] && alarm.await().minute == now[Calendar.MINUTE]) {
+                            if (alarm.await().hour == now[Calendar.HOUR_OF_DAY] &&
+                                alarm.await().minute == now[Calendar.MINUTE]
+                            ) {
                                 notification = sendNotif(
                                     this@AlarmService,
                                     alarm.await(),
                                     pendingIntent
                                 )
-                                alarm.await().isOn = false
-                                repository.updateAlarm(alarm.await())
+                                if (!alarm.await().isRepeating) {
+                                    alarm.await().isOn = false
+                                    repository.updateAlarm(alarm.await())
+                                } else {
+                                    val alarmManager =
+                                        this@AlarmService.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                                    val i = Intent(this@AlarmService, AlarmReceiver::class.java)
+                                    i.putExtra("ALARM_ID", id)
+                                    val pi = PendingIntent.getBroadcast(
+                                        this@AlarmService,
+                                        id.toInt(),
+                                        i,
+                                        0
+                                    )
+
+                                    val now = Calendar.getInstance()
+                                    val schedule = now.clone() as Calendar
+                                    schedule[Calendar.HOUR_OF_DAY] = alarm.await().hour
+                                    schedule[Calendar.MINUTE] = alarm.await().minute
+                                    schedule[Calendar.SECOND] = 0
+                                    schedule[Calendar.MILLISECOND] = 0
+
+                                    var alarmSet = false
+                                    val recList = listOf(
+                                        alarm.await().sunday,
+                                        alarm.await().monday,
+                                        alarm.await().tuesday,
+                                        alarm.await().wednesday,
+                                        alarm.await().thursday,
+                                        alarm.await().friday,
+                                        alarm.await().saturday,
+                                    )
+
+                                    for (idx in now[Calendar.DAY_OF_WEEK] - 1..now[Calendar.DAY_OF_WEEK] + 5) {
+                                        val idx2 = idx % 7 + 1
+                                        Timber.d("werk: $idx2, ${recList[idx2 - 1]}")
+                                        if (recList[idx2 - 1]) {
+                                            if (schedule > now) {
+                                                val info = AlarmManager.AlarmClockInfo(
+                                                    schedule.timeInMillis,
+                                                    pi
+                                                )
+                                                alarmManager.setAlarmClock(info, pi)
+                                                alarmSet = true
+                                                break
+                                            }
+                                        }
+                                        schedule.add(Calendar.DATE, 1)
+                                    }
+                                    if (!alarmSet) {
+                                        val info =
+                                            AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
+                                        alarmManager.setAlarmClock(info, pi)
+                                    }
+                                }
                                 playSong(alarm.await().songId, alarm.await().songUrl)
                                 startForeground(id.toInt(), notification)
                             } else {
