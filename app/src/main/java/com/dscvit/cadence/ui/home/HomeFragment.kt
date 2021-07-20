@@ -226,20 +226,28 @@ class HomeFragment : Fragment() {
                     prefs.edit().apply {
                         putString("id", result.id)
                         putString("name", result.display_name)
-                        putString("imageUrl", result.images[0].url)
+                        try {
+                            putString("imageUrl", result.images[0].url)
+                        } catch (indexOutOfBoundsException: IndexOutOfBoundsException) {
+                            putString("imageUrl", "")
+                        }
                         putString("email", result.email)
                         apply()
                     }
 
-                    if (imageUrl != result.images[0].url) {
-                        imageUrl = result.images[0].url
-                        Glide.with(requireContext())
-                            .load(imageUrl)
-                            .transition(withCrossFade(factory))
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .placeholder(R.drawable.profile_pic_placeholder)
-                            .into(binding.profilePic)
+                    try {
+                        if (imageUrl != result.images[0].url) {
+                            imageUrl = result.images[0].url
+                            Glide.with(requireContext())
+                                .load(imageUrl)
+                                .transition(withCrossFade(factory))
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .centerCrop()
+                                .placeholder(R.drawable.profile_pic_placeholder)
+                                .into(binding.profilePic)
+                        }
+                    } catch (indexOutOfBoundsException: IndexOutOfBoundsException) {
+                        imageUrl = ""
                     }
                 }
             )

@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import com.dscvit.cadence.repository.AlarmRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
@@ -55,15 +54,16 @@ class DeviceBootReceiver : BroadcastReceiver() {
                                     if (schedule <= now) schedule.add(Calendar.DATE, 1)
                                     setAlarm(pi, schedule, alarmManager)
                                 } else {
-                                    Timber.d("Weekday: ${now[Calendar.DAY_OF_WEEK]}, ${Calendar.SUNDAY}")
                                     var alarmSet = false
 
-                                    for (idx in now[Calendar.DAY_OF_WEEK] - 1..now[Calendar.DAY_OF_WEEK] + 5) {
+                                    for (
+                                        idx in
+                                        now[Calendar.DAY_OF_WEEK] - 1..now[Calendar.DAY_OF_WEEK] + 5
+                                    ) {
                                         val idx2 = idx % 7 + 1
                                         Timber.d("werk: $idx2, ${recList[idx2 - 1]}")
                                         if (recList[idx2 - 1]) {
                                             if (schedule > now) {
-                                                Timber.d("Next Alarm: $idx2, ${schedule[Calendar.DAY_OF_WEEK]}")
                                                 setAlarm(pi, schedule, alarmManager)
                                                 alarmSet = true
                                                 break
