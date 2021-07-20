@@ -35,4 +35,6 @@
     <string name="swipe_to_dismiss">Swipe to dismiss</string>
     <string name="delete_alarm">Delete Alarm</string>
     <string name="cancel">Cancel</string>
+    <string name="alarm_options">Alarm Options</string>
+    <string name="edit_alarm">Edit Alarm</string>
 </resources>
