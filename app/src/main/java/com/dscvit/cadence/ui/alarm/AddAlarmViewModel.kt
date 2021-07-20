@@ -90,7 +90,13 @@ class AddAlarmViewModel
             repositoryApi.getSongData(postParam).let { response ->
                 if (response.isSuccessful) {
                     _songId.postValue(response.body())
-                    response.body()?.let { getTracksData(name, days, it, token) }
+                    Timber.d(playlistId.value)
+                    Timber.d(response.body().toString())
+                    if (response.body()?.song != null) {
+                        response.body()?.let { getTracksData(name, days, it, token) }
+                    } else {
+                        setAlarmInserted(PLAYLIST_FAILED)
+                    }
                 } else {
                     setAlarmInserted(PLAYLIST_FAILED)
                     Timber.d("Failed to fetch song")

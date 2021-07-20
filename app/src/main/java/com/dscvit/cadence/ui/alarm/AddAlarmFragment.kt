@@ -134,7 +134,8 @@ class AddAlarmFragment : Fragment() {
         val progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
 
         continueBtn.setOnClickListener {
-            viewModel.setAlarmInserted(CONTINUE_PRESSED)
+            if (viewModel.alarmInserted.value == ALARM_INSET_COMPLETE)
+                viewModel.setAlarmInserted(CONTINUE_PRESSED)
             dialog.dismiss()
         }
 
@@ -226,6 +227,7 @@ class AddAlarmFragment : Fragment() {
                     }
                     STARTED -> {
                         progressBar.setProgress(85, true)
+                        continueBtn.text = "Continue"
                     }
                     NOT_STARTED -> {
                         progressBar.setProgress(0, true)
@@ -236,6 +238,8 @@ class AddAlarmFragment : Fragment() {
                         errorImageView.visibility = View.VISIBLE
                         error.text = "Incompatible Playlist"
                         errorDesc.text = "Please use some other playlist"
+                        continueBtn.text = "Change Playlist"
+                        viewModel.setAlarmInserted(NOT_STARTED)
                     }
                     SPOTIFY_FAILED -> {
                         continueBtn.isEnabled = true
