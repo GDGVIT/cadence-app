@@ -83,7 +83,13 @@ class AddAlarmFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prefs = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        val token = prefs.getString("token", "").toString()
+        var token = prefs.getString("token", "").toString()
+        viewModelPlaylists.token.observe(
+            viewLifecycleOwner,
+            { t ->
+                token = t
+            }
+        )
         viewModel.setIs24Hr(is24HourFormat(requireContext()))
         viewModel.setAlarmInserted(NOT_STARTED)
         viewModel.setAlarmId(-1)
@@ -134,7 +140,7 @@ class AddAlarmFragment : Fragment() {
         val progressBar = v.findViewById<ProgressBar>(R.id.progressBar)
 
         continueBtn.setOnClickListener {
-            if (viewModel.alarmInserted.value == ALARM_INSET_COMPLETE)
+            if (viewModel.alarmInserted.value != PLAYLIST_FAILED)
                 viewModel.setAlarmInserted(CONTINUE_PRESSED)
             dialog.dismiss()
         }
