@@ -1,5 +1,8 @@
 package com.dscvit.cadence.ui.home
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Context.POWER_SERVICE
 import android.content.Intent
@@ -10,7 +13,9 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -22,16 +27,19 @@ import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
 import com.dscvit.cadence.adapter.AlarmAdapter
 import com.dscvit.cadence.adapter.PlaylistAdapter
+import com.dscvit.cadence.alarm.AlarmReceiver
 import com.dscvit.cadence.databinding.FragmentHomeBinding
 import com.dscvit.cadence.model.alarm.Alarm
 import com.dscvit.cadence.util.OnEditAlarmListener
 import com.dscvit.cadence.util.SpotifyConstants.CLIENT_ID
 import com.dscvit.cadence.util.SpotifyConstants.REDIRECT_URI
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.util.Calendar
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -128,10 +136,43 @@ class HomeFragment : Fragment() {
                                 object : OnEditAlarmListener {
                                     override fun onToggle(alarm: Alarm) {
                                         viewModel.updateAlarm(alarm)
+                                        if (alarm.isOn)
+                                            setAlarm(alarm)
+                                        else
+                                            cancelAlarm(alarm)
                                     }
 
                                     override fun onDelete(alarm: Alarm) {
-                                        viewModel.deleteAlarm(alarm.id!!)
+                                        val v: View = LayoutInflater
+                                            .from(context)
+                                            .inflate(R.layout.dialog_alarm_options, null)
+
+                                        val dialog = MaterialAlertDialogBuilder(requireContext())
+                                            .setView(v)
+                                            .setBackground(
+                                                AppCompatResources.getDrawable(
+                                                    requireContext(),
+                                                    R.color.transparent
+                                                )
+                                            )
+                                            .create()
+
+                                        dialog.setCanceledOnTouchOutside(false)
+                                        dialog.setCancelable(false)
+
+                                        val deleteBtn = v.findViewById<Button>(R.id.delete_btn)
+                                        val cancelBtn = v.findViewById<Button>(R.id.cancel_btn)
+
+                                        deleteBtn.setOnClickListener {
+                                            cancelAlarm(alarm)
+                                            viewModel.deleteAlarm(alarm.id!!)
+                                            dialog.dismiss()
+                                        }
+
+                                        cancelBtn.setOnClickListener {
+                                            dialog.dismiss()
+                                        }
+                                        dialog.show()
                                     }
                                 }
                             )
@@ -185,20 +226,28 @@ class HomeFragment : Fragment() {
                     prefs.edit().apply {
                         putString("id", result.id)
                         putString("name", result.display_name)
-                        putString("imageUrl", result.images[0].url)
+                        try {
+                            putString("imageUrl", result.images[0].url)
+                        } catch (indexOutOfBoundsException: IndexOutOfBoundsException) {
+                            putString("imageUrl", "")
+                        }
                         putString("email", result.email)
                         apply()
                     }
 
-                    if (imageUrl != result.images[0].url) {
-                        imageUrl = result.images[0].url
-                        Glide.with(requireContext())
-                            .load(imageUrl)
-                            .transition(withCrossFade(factory))
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .placeholder(R.drawable.profile_pic_placeholder)
-                            .into(binding.profilePic)
+                    try {
+                        if (imageUrl != result.images[0].url) {
+                            imageUrl = result.images[0].url
+                            Glide.with(requireContext())
+                                .load(imageUrl)
+                                .transition(withCrossFade(factory))
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .centerCrop()
+                                .placeholder(R.drawable.profile_pic_placeholder)
+                                .into(binding.profilePic)
+                        }
+                    } catch (indexOutOfBoundsException: IndexOutOfBoundsException) {
+                        imageUrl = ""
                     }
                 }
             )
@@ -276,5 +325,90 @@ class HomeFragment : Fragment() {
         viewModel.spotifyAppRemote.value.let {
             SpotifyAppRemote.disconnect(it)
         }
+    }
+
+    private fun setAlarm(alarm: Alarm) {
+        val alarmManager =
+            requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val pi = getPendingIntent(alarm)
+
+        val now = Calendar.getInstance()
+        val schedule = now.clone() as Calendar
+        schedule[Calendar.HOUR_OF_DAY] = alarm.hour
+        schedule[Calendar.MINUTE] = alarm.minute
+        schedule[Calendar.SECOND] = 0
+        schedule[Calendar.MILLISECOND] = 0
+
+        if (!alarm.isRepeating) {
+            if (schedule <= now) schedule.add(Calendar.DATE, 1)
+            setAlarmManager(alarm, pi!!, schedule, alarmManager)
+        } else {
+            val recList = listOf(
+                alarm.sunday,
+                alarm.monday,
+                alarm.tuesday,
+                alarm.wednesday,
+                alarm.thursday,
+                alarm.friday,
+                alarm.saturday,
+            )
+            Timber.d("Weekday: ${now[Calendar.DAY_OF_WEEK]}, ${Calendar.SUNDAY}")
+            var alarmSet = false
+
+            for (idx in now[Calendar.DAY_OF_WEEK] - 1..now[Calendar.DAY_OF_WEEK] + 5) {
+                val idx2 = idx % 7 + 1
+                Timber.d("werk: $idx2, ${recList[idx2 - 1]}")
+                if (recList[idx2 - 1]) {
+                    if (schedule > now) {
+                        Timber.d("Next Alarm: $idx2, ${schedule[Calendar.DAY_OF_WEEK]}")
+                        setAlarmManager(alarm, pi!!, schedule, alarmManager)
+                        alarmSet = true
+                        break
+                    }
+                }
+                schedule.add(Calendar.DATE, 1)
+            }
+            if (!alarmSet) {
+                setAlarmManager(alarm, pi!!, schedule, alarmManager)
+            }
+        }
+    }
+
+    private fun cancelAlarm(alarm: Alarm) {
+        val alarmManager =
+            requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val pi = getPendingIntent(alarm)
+        alarmManager.cancel(pi)
+        Toast.makeText(
+            context,
+            "Alarm cancelled for ${alarm.time}",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    private fun getPendingIntent(alarm: Alarm): PendingIntent? {
+        val i = Intent(context, AlarmReceiver::class.java)
+        i.putExtra("ALARM_ID", alarm.id)
+        return PendingIntent.getBroadcast(
+            context,
+            alarm.id!!.toInt(),
+            i,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
+
+    private fun setAlarmManager(
+        alarm: Alarm,
+        pi: PendingIntent,
+        schedule: Calendar,
+        alarmManager: AlarmManager
+    ) {
+        val info = AlarmManager.AlarmClockInfo(schedule.timeInMillis, pi)
+        alarmManager.setAlarmClock(info, pi)
+        Toast.makeText(
+            context,
+            "Alarm scheduled for ${alarm.time}",
+            Toast.LENGTH_LONG
+        ).show()
     }
 }

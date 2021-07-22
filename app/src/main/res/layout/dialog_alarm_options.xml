@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/grey_alt"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="0dp"
+    app:rippleColor="@color/translucent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp"
+            android:fontFamily="@font/poppins_600"
+            android:text="@string/alarm_options"
+            android:textAlignment="center"
+            android:textSize="22sp" />
+
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:id="@+id/edit_btn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="-6dp"-->
+<!--            android:layout_marginBottom="-6dp"-->
+<!--            android:backgroundTint="@color/grey_alt"-->
+<!--            android:letterSpacing="0"-->
+<!--            android:padding="20dp"-->
+<!--            android:text="@string/edit_alarm"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textAllCaps="false"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="16sp"-->
+<!--            app:cornerRadius="0dp"-->
+<!--            app:rippleColor="@color/translucent" />-->
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/delete_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-6dp"
+            android:layout_marginBottom="-6dp"
+            android:backgroundTint="@color/grey_alt"
+            android:letterSpacing="0"
+            android:padding="20dp"
+            android:text="@string/delete_alarm"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/red"
+            android:textSize="16sp"
+            app:cornerRadius="0dp"
+            app:rippleColor="@color/translucent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-6dp"
+            android:layout_marginBottom="-6dp"
+            android:backgroundTint="@color/grey_alt2"
+            android:letterSpacing="0"
+            android:padding="15dp"
+            android:text="@string/cancel"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:cornerRadius="0dp"
+            app:rippleColor="@color/translucent" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -3,7 +3,7 @@
 	<img src="https://user-images.githubusercontent.com/30529572/72455010-fb38d400-37e7-11ea-9c1e-8cdeb5f5906e.png" alt="DSC VIT"/>
 </a>
 	<h2 align="center">Cadence</h2>
-	<h4 align="center">An Android app which uses ML to find the perfect song for you based on the type of your alarm</h4>
+	<h4 align="center">An Android app that uses ML to find the perfect song for you based on the type of your alarm</h4>
 </p>
 
 ---
@@ -16,14 +16,16 @@
 
 ## Features
 - [x]   Fetching user's playlist
-- [x]   Can be used as a normal alarm app 
 - [x]   ML to anticipate alarm song
+- [x]   Can set alarms
+- [x]   Can set repeating alarms
+- [x]   play alarms using spotify sdk
  
 <br>
 
 ## Dependencies
  - Spotify SDK
- - Spotify web API
+ - Spotify Web API
 
 
 ## Running

@@ -10,6 +10,7 @@ data class Alarm(
     val alarmName: String,
     val hour: Int,
     val minute: Int,
+    val time: String,
     val monday: Boolean,
     val tuesday: Boolean,
     val wednesday: Boolean,

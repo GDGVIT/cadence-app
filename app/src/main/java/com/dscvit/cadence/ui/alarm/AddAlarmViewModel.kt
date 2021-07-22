@@ -9,6 +9,12 @@ import com.dscvit.cadence.model.ml.Song
 import com.dscvit.cadence.model.song.TracksData
 import com.dscvit.cadence.repository.AlarmRepository
 import com.dscvit.cadence.repository.SpotifyRepository
+import com.dscvit.cadence.util.Constants.ALARM_INSET_COMPLETE
+import com.dscvit.cadence.util.Constants.NOT_STARTED
+import com.dscvit.cadence.util.Constants.NO_INTERNET
+import com.dscvit.cadence.util.Constants.PLAYLIST_FAILED
+import com.dscvit.cadence.util.Constants.SPOTIFY_FAILED
+import com.dscvit.cadence.util.Constants.TRACK_FETCH_COMPLETE
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -84,15 +90,21 @@ class AddAlarmViewModel
             repositoryApi.getSongData(postParam).let { response ->
                 if (response.isSuccessful) {
                     _songId.postValue(response.body())
-                    response.body()?.let { getTracksData(name, days, it, token) }
+                    Timber.d(playlistId.value)
+                    Timber.d(response.body().toString())
+                    if (response.body()?.song != null) {
+                        response.body()?.let { getTracksData(name, days, it, token) }
+                    } else {
+                        setAlarmInserted(PLAYLIST_FAILED)
+                    }
                 } else {
-                    setAlarmInserted(-1)
+                    setAlarmInserted(PLAYLIST_FAILED)
                     Timber.d("Failed to fetch song")
                 }
             }
         } catch (e: Exception) {
             Timber.d("Failed to fetch song: $e")
-            setAlarmInserted(-3)
+            setAlarmInserted(NO_INTERNET)
         }
     }
 
@@ -121,13 +133,14 @@ class AddAlarmViewModel
                 alarmName = name,
                 hour = hour.value!!,
                 minute = min.value!!,
-                monday = days[0],
-                tuesday = days[1],
-                wednesday = days[2],
-                thursday = days[3],
-                friday = days[4],
-                saturday = days[5],
-                sunday = days[6],
+                time = time.value!!,
+                sunday = days[0],
+                monday = days[1],
+                tuesday = days[2],
+                wednesday = days[3],
+                thursday = days[4],
+                friday = days[5],
+                saturday = days[6],
                 isRepeating = days.contains(true),
                 isOn = true,
                 playlistId = playlistId.value!!,
@@ -142,12 +155,12 @@ class AddAlarmViewModel
             viewModelScope.launch(Dispatchers.IO) {
                 id = repository.insertAlarm(alarm)
                 setAlarmId(id)
-                setAlarmInserted(3)
+                setAlarmInserted(ALARM_INSET_COMPLETE)
             }
             return id
         }
         Timber.d("WOW: ${playlistId.value} ${sid.song}")
-        setAlarmInserted(-1)
+        setAlarmInserted(PLAYLIST_FAILED)
         return -1
     }
 
@@ -163,20 +176,20 @@ class AddAlarmViewModel
                 )
                     .let { response ->
                         if (response.isSuccessful) {
-                            setAlarmInserted(2)
+                            setAlarmInserted(TRACK_FETCH_COMPLETE)
                             _trackData.postValue(response.body())
                             response.body()?.let { insertAlarm(name, days, sid, it) }
                         } else {
-                            setAlarmInserted(-2)
+                            setAlarmInserted(SPOTIFY_FAILED)
                             Timber.d("Failed to fetch song data $token ${response.raw()}")
                         }
                     }
             } catch (e: Exception) {
-                setAlarmInserted(-2)
+                setAlarmInserted(SPOTIFY_FAILED)
             }
         }
 
     init {
-        setSelectedPlaylist(0)
+        setSelectedPlaylist(NOT_STARTED)
     }
 }
