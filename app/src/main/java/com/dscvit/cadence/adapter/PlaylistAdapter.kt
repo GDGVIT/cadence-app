@@ -38,7 +38,6 @@ class PlaylistAdapter(
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val currPlaylist = playlists[position]
-
         viewHolder.apply {
             playlistTitle.text = currPlaylist.name
             playlistSubtitle.text = "by ${currPlaylist.owner.display_name}"

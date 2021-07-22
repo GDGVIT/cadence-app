@@ -57,8 +57,8 @@ class DeviceBootReceiver : BroadcastReceiver() {
                                     var alarmSet = false
 
                                     for (
-                                        idx in
-                                        now[Calendar.DAY_OF_WEEK] - 1..now[Calendar.DAY_OF_WEEK] + 5
+                                    idx in
+                                    now[Calendar.DAY_OF_WEEK] - 1..now[Calendar.DAY_OF_WEEK] + 5
                                     ) {
                                         val idx2 = idx % 7 + 1
                                         Timber.d("werk: $idx2, ${recList[idx2 - 1]}")

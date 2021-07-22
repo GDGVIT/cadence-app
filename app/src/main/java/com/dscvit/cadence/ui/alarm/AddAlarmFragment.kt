@@ -142,6 +142,8 @@ class AddAlarmFragment : Fragment() {
         continueBtn.setOnClickListener {
             if (viewModel.alarmInserted.value != PLAYLIST_FAILED)
                 viewModel.setAlarmInserted(CONTINUE_PRESSED)
+            else
+                viewModel.setAlarmInserted(NOT_STARTED)
             dialog.dismiss()
         }
 
@@ -245,7 +247,6 @@ class AddAlarmFragment : Fragment() {
                         error.text = "Incompatible Playlist"
                         errorDesc.text = "Please use some other playlist"
                         continueBtn.text = "Change Playlist"
-                        viewModel.setAlarmInserted(NOT_STARTED)
                     }
                     SPOTIFY_FAILED -> {
                         continueBtn.isEnabled = true
