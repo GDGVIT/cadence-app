@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context=".ui.alarm.AddAlarmFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -216,6 +217,7 @@
                     android:id="@+id/playlist_image"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
+                    android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
                     tools:srcCompat="@tools:sample/avatars" />

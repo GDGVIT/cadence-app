@@ -67,7 +67,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.bottomNav.setOnNavigationItemSelectedListener { item ->
+        binding.bottomNav.setOnItemSelectedListener { item ->
             viewModel.setPage(item.itemId)
             true
         }
