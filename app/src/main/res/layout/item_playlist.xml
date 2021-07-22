@@ -25,14 +25,16 @@
                 android:id="@+id/imageView"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
+                android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -53,6 +55,28 @@
                     tools:text="TextView" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/numberTracks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:alpha="0.8"
+                android:paddingBottom="1dp"
+                android:textSize="14sp"
+                tools:text="21" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="bottom"
+                android:adjustViewBounds="true"
+                android:alpha="0.8"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_tracks"
+                app:tint="@color/white" />
+
         </LinearLayout>
 
         <View
