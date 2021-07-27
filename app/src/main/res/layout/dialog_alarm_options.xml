@@ -27,25 +27,8 @@
             android:textAlignment="center"
             android:textSize="22sp" />
 
-        <!--        <com.google.android.material.button.MaterialButton-->
-        <!--            android:id="@+id/edit_btn"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginTop="-6dp"-->
-        <!--            android:layout_marginBottom="-6dp"-->
-        <!--            android:backgroundTint="@color/grey_alt"-->
-        <!--            android:letterSpacing="0"-->
-        <!--            android:padding="20dp"-->
-        <!--            android:text="@string/edit_alarm"-->
-        <!--            android:textAlignment="center"-->
-        <!--            android:textAllCaps="false"-->
-        <!--            android:textColor="@color/white"-->
-        <!--            android:textSize="16sp"-->
-        <!--            app:cornerRadius="0dp"-->
-        <!--            app:rippleColor="@color/translucent" />-->
-
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/delete_btn"
+            android:id="@+id/edit_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="-6dp"
@@ -53,13 +36,30 @@
             android:backgroundTint="@color/grey_alt"
             android:letterSpacing="0"
             android:padding="20dp"
-            android:text="@string/delete_alarm"
+            android:text="@string/edit_alarm"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:textColor="@color/red"
+            android:textColor="@color/white"
             android:textSize="16sp"
             app:cornerRadius="0dp"
             app:rippleColor="@color/translucent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/delete_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="-6dp"
+            android:layout_marginTop="-6dp"
+            android:backgroundTint="@color/grey_alt"
+            android:padding="20dp"
+            android:letterSpacing="0"
+            android:text="@string/delete_alarm"
+            android:textAllCaps="false"
+            android:textColor="@color/red"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            app:rippleColor="@color/translucent"
+            app:cornerRadius="0dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_btn"

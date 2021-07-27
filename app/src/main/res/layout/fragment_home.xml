@@ -66,9 +66,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
+            android:layoutAnimation="@anim/layout_animation"
             android:overScrollMode="never"
             android:paddingTop="10dp"
-            android:paddingBottom="100dp" />
+            android:paddingBottom="100dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -93,9 +95,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
+            android:layoutAnimation="@anim/layout_animation"
             android:overScrollMode="never"
             android:paddingTop="5dp"
             android:paddingBottom="100dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:listitem="@layout/item_alarm" />
 
     </RelativeLayout>

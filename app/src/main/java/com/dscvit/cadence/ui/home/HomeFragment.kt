@@ -13,9 +13,8 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -30,10 +29,9 @@ import com.dscvit.cadence.adapter.PlaylistAdapter
 import com.dscvit.cadence.alarm.AlarmReceiver
 import com.dscvit.cadence.databinding.FragmentHomeBinding
 import com.dscvit.cadence.model.alarm.Alarm
-import com.dscvit.cadence.util.OnEditAlarmListener
+import com.dscvit.cadence.util.AlarmListener
 import com.dscvit.cadence.util.SpotifyConstants.CLIENT_ID
 import com.dscvit.cadence.util.SpotifyConstants.REDIRECT_URI
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -133,7 +131,7 @@ class HomeFragment : Fragment() {
                         if (firstTimeAlarm) {
                             alarmAdapter = AlarmAdapter(
                                 t,
-                                object : OnEditAlarmListener {
+                                object : AlarmListener {
                                     override fun onToggle(alarm: Alarm) {
                                         viewModel.updateAlarm(alarm)
                                         if (alarm.isOn)
@@ -143,36 +141,18 @@ class HomeFragment : Fragment() {
                                     }
 
                                     override fun onDelete(alarm: Alarm) {
-                                        val v: View = LayoutInflater
-                                            .from(context)
-                                            .inflate(R.layout.dialog_alarm_options, null)
+                                        cancelAlarm(alarm)
+                                        viewModel.deleteAlarm(alarm.id!!)
+                                    }
 
-                                        val dialog = MaterialAlertDialogBuilder(requireContext())
-                                            .setView(v)
-                                            .setBackground(
-                                                AppCompatResources.getDrawable(
-                                                    requireContext(),
-                                                    R.color.transparent
-                                                )
-                                            )
-                                            .create()
-
-                                        dialog.setCanceledOnTouchOutside(false)
-                                        dialog.setCancelable(false)
-
-                                        val deleteBtn = v.findViewById<Button>(R.id.delete_btn)
-                                        val cancelBtn = v.findViewById<Button>(R.id.cancel_btn)
-
-                                        deleteBtn.setOnClickListener {
-                                            cancelAlarm(alarm)
-                                            viewModel.deleteAlarm(alarm.id!!)
-                                            dialog.dismiss()
+                                    override fun onEdit(alarm: Alarm) {
+                                        val bundle = bundleOf("id" to alarm.id)
+                                        try {
+                                            requireView().findNavController()
+                                                .navigate(R.id.home_to_add_alarm, bundle)
+                                        } catch (e: Exception) {
+                                            Timber.d("Error: $e")
                                         }
-
-                                        cancelBtn.setOnClickListener {
-                                            dialog.dismiss()
-                                        }
-                                        dialog.show()
                                     }
                                 }
                             )
@@ -292,6 +272,7 @@ class HomeFragment : Fragment() {
                     } else {
                         playlistAdapter.dataSetChange(result.items)
                         playlistAdapter.notifyDataSetChanged()
+                        binding.playlists.scheduleLayoutAnimation()
                     }
                 }
             )
@@ -313,7 +294,7 @@ class HomeFragment : Fragment() {
             pmIntent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
             Toast.makeText(
                 context,
-                "Please turn off the Battery Optimization Settings for Cadence to ring the alarms on time.",
+                "Please turn off the Battery Optimization Settings for Cadence & Spotify to ring the alarms on time.",
                 Toast.LENGTH_LONG
             ).show()
             startActivity(pmIntent)

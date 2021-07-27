@@ -4,11 +4,14 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.dscvit.cadence.R
 import com.dscvit.cadence.model.alarm.Alarm
-import com.dscvit.cadence.util.OnEditAlarmListener
+import com.dscvit.cadence.util.AlarmListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -16,7 +19,7 @@ import java.util.Locale
 
 class AlarmAdapter(
     private var alarms: List<Alarm>,
-    private val switchListener: OnEditAlarmListener
+    private val switchListener: AlarmListener
 ) :
     RecyclerView.Adapter<AlarmAdapter.ViewHolder>() {
 
@@ -65,8 +68,44 @@ class AlarmAdapter(
                 switchListener.onToggle(alarm)
             }
 
+            itemView.setOnClickListener {
+                switchListener.onEdit(alarm)
+            }
+
             itemView.setOnLongClickListener {
-                switchListener.onDelete(alarm)
+                val v: View = LayoutInflater
+                    .from(itemView.context)
+                    .inflate(R.layout.dialog_alarm_options, null)
+
+                val dialog = MaterialAlertDialogBuilder(itemView.context)
+                    .setView(v)
+                    .setBackground(
+                        AppCompatResources.getDrawable(
+                            itemView.context,
+                            R.color.transparent
+                        )
+                    )
+                    .create()
+
+                val editBtn = v.findViewById<Button>(R.id.edit_btn)
+                val deleteBtn = v.findViewById<Button>(R.id.delete_btn)
+                val cancelBtn = v.findViewById<Button>(R.id.cancel_btn)
+
+                editBtn.setOnClickListener {
+                    switchListener.onEdit(alarm)
+                    dialog.dismiss()
+                }
+
+                deleteBtn.setOnClickListener {
+                    switchListener.onDelete(alarm)
+                    dialog.dismiss()
+                }
+
+                cancelBtn.setOnClickListener {
+                    dialog.dismiss()
+                }
+                dialog.show()
+
                 true
             }
         }

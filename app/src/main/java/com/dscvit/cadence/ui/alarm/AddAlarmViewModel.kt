@@ -82,31 +82,32 @@ class AddAlarmViewModel
     private val _songId = MutableLiveData<Song>()
     val songId: LiveData<Song> get() = _songId
 
-    fun getSongData(name: String, days: List<Boolean>, token: String) = viewModelScope.launch {
-        try {
-            val postParam = JsonObject()
-            postParam.addProperty("prompt", name)
-            postParam.addProperty("playlist", playlistId.value)
-            repositoryApi.getSongData(postParam).let { response ->
-                if (response.isSuccessful) {
-                    _songId.postValue(response.body())
-                    Timber.d(playlistId.value)
-                    Timber.d(response.body().toString())
-                    if (response.body()?.song != null) {
-                        response.body()?.let { getTracksData(name, days, it, token) }
+    fun getSongData(name: String, days: List<Boolean>, token: String, id: Long?) =
+        viewModelScope.launch {
+            try {
+                val postParam = JsonObject()
+                postParam.addProperty("prompt", name)
+                postParam.addProperty("playlist", playlistId.value)
+                repositoryApi.getSongData(postParam).let { response ->
+                    if (response.isSuccessful) {
+                        _songId.postValue(response.body())
+                        Timber.d(playlistId.value)
+                        Timber.d(response.body().toString())
+                        if (response.body()?.song != null) {
+                            response.body()?.let { getTracksData(name, days, it, token, id) }
+                        } else {
+                            setAlarmInserted(PLAYLIST_FAILED)
+                        }
                     } else {
                         setAlarmInserted(PLAYLIST_FAILED)
+                        Timber.d("Failed to fetch song")
                     }
-                } else {
-                    setAlarmInserted(PLAYLIST_FAILED)
-                    Timber.d("Failed to fetch song")
                 }
+            } catch (e: Exception) {
+                Timber.d("Failed to fetch song: $e")
+                setAlarmInserted(NO_INTERNET)
             }
-        } catch (e: Exception) {
-            Timber.d("Failed to fetch song: $e")
-            setAlarmInserted(NO_INTERNET)
         }
-    }
 
     private val _alarmId = MutableLiveData<Long>()
     val alarmId: LiveData<Long> get() = _alarmId
@@ -124,11 +125,11 @@ class AddAlarmViewModel
         name: String,
         days: List<Boolean>,
         sid: Song,
-        td: TracksData
+        td: TracksData,
+        alarmId: Long?
     ): Long {
         if (sid.intent == null || sid.intent == "") sid.intent = "nan"
         if (sid.song != null && sid.song != "") {
-
             val alarm = Alarm(
                 alarmName = name,
                 hour = hour.value!!,
@@ -153,7 +154,13 @@ class AddAlarmViewModel
             )
             var id: Long = 0
             viewModelScope.launch(Dispatchers.IO) {
-                id = repository.insertAlarm(alarm)
+                if (alarmId != null && alarmId > 0) {
+                    alarm.id = alarmId
+                    id = alarmId
+                    repository.updateAlarm(alarm)
+                } else {
+                    id = repository.insertAlarm(alarm)
+                }
                 setAlarmId(id)
                 setAlarmInserted(ALARM_INSET_COMPLETE)
             }
@@ -167,7 +174,13 @@ class AddAlarmViewModel
     private val _trackData = MutableLiveData<TracksData>()
     val trackData: LiveData<TracksData> get() = _trackData
 
-    private fun getTracksData(name: String, days: List<Boolean>, sid: Song, token: String) =
+    private fun getTracksData(
+        name: String,
+        days: List<Boolean>,
+        sid: Song,
+        token: String,
+        id: Long?
+    ) =
         viewModelScope.launch {
             try {
                 repositoryApi.getTracksData(
@@ -178,7 +191,7 @@ class AddAlarmViewModel
                         if (response.isSuccessful) {
                             setAlarmInserted(TRACK_FETCH_COMPLETE)
                             _trackData.postValue(response.body())
-                            response.body()?.let { insertAlarm(name, days, sid, it) }
+                            response.body()?.let { insertAlarm(name, days, sid, it, id) }
                         } else {
                             setAlarmInserted(SPOTIFY_FAILED)
                             Timber.d("Failed to fetch song data $token ${response.raw()}")
@@ -188,6 +201,15 @@ class AddAlarmViewModel
                 setAlarmInserted(SPOTIFY_FAILED)
             }
         }
+
+    private val _alarmData = MutableLiveData<Alarm>()
+    val alarmData: LiveData<Alarm> get() = _alarmData
+
+    fun getAlarm(alarmId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _alarmData.postValue(repository.getAlarmById(alarmId))
+        }
+    }
 
     init {
         setSelectedPlaylist(NOT_STARTED)

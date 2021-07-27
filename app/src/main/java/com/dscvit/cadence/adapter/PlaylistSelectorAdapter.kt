@@ -12,11 +12,11 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
 import com.dscvit.cadence.model.playlist.Item
-import com.dscvit.cadence.util.OnSelectPlaylistListener
+import com.dscvit.cadence.util.PlaylistListener
 
 class PlaylistSelectorAdapter(
     private var playlists: List<Item>,
-    private val selectListener: OnSelectPlaylistListener
+    private val selectListener: PlaylistListener
 ) :
     RecyclerView.Adapter<PlaylistSelectorAdapter.ViewHolder>() {
 

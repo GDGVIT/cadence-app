@@ -12,6 +12,7 @@ import android.text.format.DateFormat.is24HourFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -56,6 +57,8 @@ class AddAlarmFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var prefs: SharedPreferences
     private var recList = emptyList<Boolean>()
+    private var id: Long? = 0
+    private var firstTime = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +96,59 @@ class AddAlarmFragment : Fragment() {
         viewModel.setIs24Hr(is24HourFormat(requireContext()))
         viewModel.setAlarmInserted(NOT_STARTED)
         viewModel.setAlarmId(-1)
+
+        if (firstTime) {
+            id = arguments?.getLong("id")
+            if (id != null && id!! > 0) {
+                viewModel.getAlarm(id!!.toLong())
+                viewModel.alarmData.observe(
+                    viewLifecycleOwner,
+                    { alarm ->
+                        viewModel.setTime(alarm.hour, alarm.minute, is24HourFormat(requireContext()))
+                        viewModel.setPlaylistId(alarm.playlistId)
+                        val playLen = viewModelPlaylists.spotifyRespPlay.value?.items?.size
+                        if (playLen != null) {
+                            for (i in 0 until playLen) {
+                                val playId = viewModelPlaylists.spotifyRespPlay.value?.items?.get(i)?.id
+                                if (playId == alarm.playlistId) {
+                                    viewModel.setSelectedPlaylist(i)
+                                    break
+                                }
+                            }
+                        }
+                        binding.apply {
+                            alarmEditField.setText(alarm.alarmName)
+                            toggleSun.isChecked = alarm.sunday
+                            toggleMon.isChecked = alarm.monday
+                            toggleTue.isChecked = alarm.tuesday
+                            toggleWed.isChecked = alarm.wednesday
+                            toggleThu.isChecked = alarm.thursday
+                            toggleFri.isChecked = alarm.friday
+                            toggleSat.isChecked = alarm.saturday
+                        }
+                    }
+                )
+            } else {
+                val now = Calendar.getInstance()
+                viewModel.setTime(
+                    now[Calendar.HOUR_OF_DAY],
+                    now[Calendar.MINUTE],
+                    is24HourFormat(requireContext())
+                )
+                viewModel.setSelectedPlaylist(0)
+                viewModelPlaylists.spotifyRespPlay.value?.items?.get(0)?.id?.let {
+                    viewModel.setPlaylistId(
+                        it
+                    )
+                }
+            }
+            firstTime = false
+        }
+
+        if (id != null && id!! > 0) {
+            binding.titleBar.text = "Edit Alarm"
+        }
+
         binding.apply {
             val paint = digitalClock.paint
             val width = paint.measureText(viewModel.time.value)
@@ -148,6 +204,7 @@ class AddAlarmFragment : Fragment() {
         }
 
         binding.nextBtn.setOnClickListener {
+            hideKeyboard()
             if (binding.alarmEditField.text.toString().trim() != "") {
                 viewModel.setAlarmInserted(STARTED)
                 recList = listOf(
@@ -162,8 +219,10 @@ class AddAlarmFragment : Fragment() {
                 viewModel.getSongData(
                     binding.alarmEditField.text.toString(),
                     recList,
-                    token
+                    token,
+                    id
                 )
+
                 dialog.show()
             } else {
                 binding.alarmTextField.error = "Required"
@@ -377,5 +436,10 @@ class AddAlarmFragment : Fragment() {
             "Alarm scheduled for ${viewModel.time.value}",
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    fun Fragment.hideKeyboard() {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 }
