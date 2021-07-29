@@ -146,12 +146,20 @@ class HomeFragment : Fragment() {
                                     }
 
                                     override fun onEdit(alarm: Alarm) {
-                                        val bundle = bundleOf("id" to alarm.id)
-                                        try {
-                                            requireView().findNavController()
-                                                .navigate(R.id.home_to_add_alarm, bundle)
-                                        } catch (e: Exception) {
-                                            Timber.d("Error: $e")
+                                        if (viewModel.spotifyRespPlay.value != null) {
+                                            val bundle = bundleOf("id" to alarm.id)
+                                            try {
+                                                requireView().findNavController()
+                                                    .navigate(R.id.home_to_add_alarm, bundle)
+                                            } catch (e: Exception) {
+                                                Timber.d("Error: $e")
+                                            }
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "Loading... Please Wait",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
                                     }
                                 }
