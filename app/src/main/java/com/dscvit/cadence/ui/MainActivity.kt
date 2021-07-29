@@ -99,11 +99,7 @@ class MainActivity : AppCompatActivity() {
         builder.setScopes(
             arrayOf(
                 "app-remote-control",
-                "user-read-email",
-                "user-library-read",
                 "playlist-read-private",
-                "playlist-read-collaborative",
-                "streaming"
             )
         )
         val request = builder.build()
