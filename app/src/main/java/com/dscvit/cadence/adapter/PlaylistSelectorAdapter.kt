@@ -12,17 +12,18 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.dscvit.cadence.R
 import com.dscvit.cadence.model.playlist.Item
-import com.dscvit.cadence.util.OnSelectPlaylistListener
+import com.dscvit.cadence.util.PlaylistListener
 
 class PlaylistSelectorAdapter(
     private var playlists: List<Item>,
-    private val selectListener: OnSelectPlaylistListener
+    private val selectListener: PlaylistListener
 ) :
     RecyclerView.Adapter<PlaylistSelectorAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val playlistTitle: TextView = view.findViewById(R.id.playlistTitle)
         val playlistSubtitle: TextView = view.findViewById(R.id.playlistSubtitle)
+        val numberTracks: TextView = view.findViewById(R.id.numberTracks)
         val imageView: ImageView = view.findViewById(R.id.imageView)
     }
 
@@ -38,6 +39,7 @@ class PlaylistSelectorAdapter(
         viewHolder.apply {
             playlistTitle.text = currPlaylist.name
             playlistSubtitle.text = "by ${currPlaylist.owner.display_name}"
+            numberTracks.text = currPlaylist.tracks.total.toString()
             val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
             Glide.with(imageView.context)
                 .load(currPlaylist.images[0].url)

@@ -9,7 +9,6 @@ import com.dscvit.cadence.repository.AlarmRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -19,7 +18,13 @@ class DeviceBootReceiver : BroadcastReceiver() {
     lateinit var repository: AlarmRepository
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent!!.action.equals("android.intent.action.BOOT_COMPLETED")) {
+        if (intent!!.action.equals(
+                "android.intent.action.BOOT_COMPLETED"
+            ) ||
+            intent.action.equals(
+                    "android.intent.action.MY_PACKAGE_REPLACED"
+                )
+        ) {
             runBlocking {
                 val alarms = async { repository.getAllAlarms() }
                 runBlocking {
@@ -61,7 +66,6 @@ class DeviceBootReceiver : BroadcastReceiver() {
                                         now[Calendar.DAY_OF_WEEK] - 1..now[Calendar.DAY_OF_WEEK] + 5
                                     ) {
                                         val idx2 = idx % 7 + 1
-                                        Timber.d("werk: $idx2, ${recList[idx2 - 1]}")
                                         if (recList[idx2 - 1]) {
                                             if (schedule > now) {
                                                 setAlarm(pi, schedule, alarmManager)

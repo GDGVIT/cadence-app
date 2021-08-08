@@ -19,7 +19,8 @@
 - [x]   ML to anticipate alarm song
 - [x]   Can set alarms
 - [x]   Can set repeating alarms
-- [x]   play alarms using spotify sdk
+- [x]   Can edit alarms
+- [x]   Play alarms using Spotify SDK
  
 <br>
 

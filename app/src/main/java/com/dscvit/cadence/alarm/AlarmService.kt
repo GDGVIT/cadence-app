@@ -19,9 +19,10 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
 import java.util.Calendar
+import java.util.Timer
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 
 @AndroidEntryPoint
 class AlarmService : Service() {
@@ -101,7 +102,6 @@ class AlarmService : Service() {
 
                                     for (idx in now[Calendar.DAY_OF_WEEK] - 1..now[Calendar.DAY_OF_WEEK] + 5) {
                                         val idx2 = idx % 7 + 1
-                                        Timber.d("werk: $idx2, ${recList[idx2 - 1]}")
                                         if (recList[idx2 - 1]) {
                                             if (schedule > now) {
                                                 val info = AlarmManager.AlarmClockInfo(
@@ -123,6 +123,10 @@ class AlarmService : Service() {
                                 }
                                 playSong(alarm.await().songId, alarm.await().songUrl)
                                 startForeground(id.toInt(), notification)
+                                Timer().schedule(60000) {
+                                    stopForeground(true)
+                                    stopSelf()
+                                }
                             } else {
                                 stopSelf()
                             }

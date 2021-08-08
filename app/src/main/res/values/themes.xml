@@ -18,6 +18,14 @@
         <item name="android:navigationBarColor">@color/black</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="materialTimePickerStyle">@style/amPmButton</item>
+
+        <!-- Shapes-->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Cadence.SmallComponent
+        </item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Cadence.MediumComponent
+        </item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Cadence.LargeComponent
+        </item>
     </style>
 
     <style name="ButtonFancy" parent="">

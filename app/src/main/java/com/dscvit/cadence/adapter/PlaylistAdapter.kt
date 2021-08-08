@@ -25,6 +25,7 @@ class PlaylistAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val playlistTitle: TextView = view.findViewById(R.id.playlistTitle)
         val playlistSubtitle: TextView = view.findViewById(R.id.playlistSubtitle)
+        val numberTracks: TextView = view.findViewById(R.id.numberTracks)
         val imageView: ImageView = view.findViewById(R.id.imageView)
     }
 
@@ -37,10 +38,10 @@ class PlaylistAdapter(
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val currPlaylist = playlists[position]
-
         viewHolder.apply {
             playlistTitle.text = currPlaylist.name
             playlistSubtitle.text = "by ${currPlaylist.owner.display_name}"
+            numberTracks.text = currPlaylist.tracks.total.toString()
             val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
             Glide.with(imageView.context)
                 .load(currPlaylist.images[0].url)

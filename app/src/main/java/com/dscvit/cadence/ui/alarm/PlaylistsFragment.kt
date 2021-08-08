@@ -11,7 +11,7 @@ import com.dscvit.cadence.adapter.PlaylistSelectorAdapter
 import com.dscvit.cadence.databinding.FragmentPlaylistsBinding
 import com.dscvit.cadence.model.playlist.Item
 import com.dscvit.cadence.ui.home.HomeViewModel
-import com.dscvit.cadence.util.OnSelectPlaylistListener
+import com.dscvit.cadence.util.PlaylistListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,7 +45,7 @@ class PlaylistsFragment : Fragment() {
                     playlistAdapter =
                         PlaylistSelectorAdapter(
                             result.items,
-                            object : OnSelectPlaylistListener {
+                            object : PlaylistListener {
                                 override fun onSelect(playlist: Item, position: Int) {
                                     viewModel.setSelectedPlaylist(position)
                                     viewModel.setPlaylistId(playlist.id)

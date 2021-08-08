@@ -103,7 +103,12 @@ class HomeViewModel
             Timber.d("STARTING2... ${token.value}")
             repository.getPlaylistData("Bearer ${token.value}").let { response ->
                 if (response.isSuccessful) {
-                    _respPlay.postValue(response.body())
+                    var playlists = response.body()
+                    val selectedPlaylists = playlists?.items?.filter { it.tracks.total > 0 }
+                    if (playlists != null && selectedPlaylists != null) {
+                        playlists.items = selectedPlaylists
+                        _respPlay.postValue(playlists)
+                    }
                 } else {
                     Timber.d("FAILED TO FETCH2 ${token.value}")
                 }
