@@ -128,9 +128,17 @@ class HomeFragment : Fragment() {
                 if (t != null) {
                     if (t.isNotEmpty()) {
                         binding.noAlarms.visibility = View.GONE
+
+                        val t_sorted = t.sortedBy {
+                            val time = Calendar.getInstance()
+                            time[Calendar.HOUR_OF_DAY] = it.hour
+                            time[Calendar.MINUTE] = it.minute
+                            time.timeInMillis
+                        }
+
                         if (firstTimeAlarm) {
                             alarmAdapter = AlarmAdapter(
-                                t,
+                                t_sorted,
                                 object : AlarmListener {
                                     override fun onToggle(alarm: Alarm) {
                                         viewModel.updateAlarm(alarm)
@@ -171,7 +179,7 @@ class HomeFragment : Fragment() {
                             }
                             firstTimeAlarm = false
                         } else {
-                            alarmAdapter.dataSetChange(t)
+                            alarmAdapter.dataSetChange(t_sorted)
                             alarmAdapter.notifyDataSetChanged()
                         }
                     } else {

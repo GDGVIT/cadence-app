@@ -438,7 +438,7 @@ class AddAlarmFragment : Fragment() {
         ).show()
     }
 
-    fun Fragment.hideKeyboard() {
+    private fun Fragment.hideKeyboard() {
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
